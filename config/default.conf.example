@@ -1,0 +1,20 @@
+# Directories and ownership settings
+SOURCE_DIR=/my/source/dir
+TARGET_DIR=/my/target/dir
+TARGET_OWNER="www-data:www-data"
+
+# Watch options
+EVENTS=moved_to,close_write,create
+RECURSIVE=true
+EXCLUDE_PATTERNS=("*.tmp" "*.part" "~*")
+SANITIZE_FILENAMES=true
+
+# Action script and hooks
+ACTION_SCRIPT=/opt/inotibatch/actions/debug.sh
+PRE_HOOK_DIR=/opt/inotibatch/hooks/pre-hook.d
+POST_HOOK_DIR=/opt/inotibatch/hooks/post-hook.d
+POST_HOOK_BATCH_SIZE=20
+POST_HOOK_IDLE_TIMEOUT=30
+
+# Notification settings
+MAIL_ON_ERROR=admin@example.com

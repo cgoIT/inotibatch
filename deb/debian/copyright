@@ -1,0 +1,7 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: inotibatch
+Source: https://github.com/cgoIT/inotibatch
+
+Files: *
+Copyright: 2025 Carsten Goetzinger <carsten@cgo-it.de>
+License: MIT

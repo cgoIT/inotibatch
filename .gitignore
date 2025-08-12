@@ -1,0 +1,14 @@
+.DS_Store
+*.log
+
+/test/data/source/*
+/test/data/dest/*
+
+changelog
+debian-changelog.sh
+
+# ACT
+/build
+/repo
+.secrets
+run-action.sh

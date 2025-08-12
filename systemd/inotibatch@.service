@@ -1,0 +1,15 @@
+[Unit]
+Description=InotiBatch Sync Service (%i)
+After=network.target
+After=network-online.target
+
+[Service]
+Type=simple
+Environment=CONFIG_DIR=/etc/inotibatch
+ExecStart=/path/to/inotibatch.sh %i
+Restart=on-failure
+RestartSec=3
+KillMode=control-group
+
+[Install]
+WantedBy=multi-user.target

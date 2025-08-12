@@ -1,0 +1,178 @@
+name: Release, Build .deb & Publish APT repo (gh-pages)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # 1) release-please may create Release/Tag
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      local_run: ${{ steps.detect-local-run.outputs.local_run }}
+      release_created: ${{ steps.set-outputs.outputs.release_created }}
+      tag_name: ${{ steps.set-outputs.outputs.tag_name }}
+      version: ${{ steps.set-outputs.outputs.version }}
+    steps:
+      - name: Detect local run
+        id: detect-local-run
+        run: |
+          if [ -n "${ACT}" ]; then
+            echo "local_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "local_run=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run release-please
+        if: steps.detect-local-run.outputs.local_run == 'false'
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: simple
+
+      - name: Set outputs
+        id: set-outputs
+        run: |
+          if [ "${ACT}" = "true" ]; then
+            echo "release_created=true" >> $GITHUB_OUTPUT
+            echo "tag_name=v1.1.2" >> $GITHUB_OUTPUT
+            echo "version=1.1.2" >> $GITHUB_OUTPUT
+          else
+            echo "release_created=${{ steps.release.outputs.release_created }}" >> $GITHUB_OUTPUT
+            echo "tag_name=${{ steps.release.outputs.tag_name }}" >> $GITHUB_OUTPUT
+            echo "version=${{ steps.release.outputs.version }}" >> $GITHUB_OUTPUT
+          fi
+
+  # 2) Build & sign .deb, upload to Github Release and Github Pages (gh-pages)
+  build-and-upload:
+    needs: release
+    if: needs.release.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    env:
+      GH_PAGES_BRANCH: gh-pages
+      BUILD_DIR: build
+      REPO_DIR: repo
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update && sudo apt-get install -y \
+            build-essential \
+            fakeroot \
+            devscripts \
+            debhelper \
+            dh-make \
+            git \
+            gnupg \
+            curl
+
+      - name: Import GPG private key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          set -eu
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+
+          if echo "$GPG_PRIVATE_KEY" | grep -qE '^[A-Za-z0-9+/=]+$'; then
+            echo "Detected Base64-encoded GPG key"
+            echo "$GPG_PRIVATE_KEY" | base64 --decode | gpg --batch --import
+          else
+            echo "Detected ASCII-armored GPG key"
+            echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          fi
+
+          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
+          echo "use-agent" >> ~/.gnupg/gpg.conf
+          chmod 600 ~/.gnupg/gpg-agent.conf ~/.gnupg/gpg.conf
+          gpgconf --kill gpg-agent || true
+
+          KEY_ID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/ {print $5; exit}')
+          echo "Imported GPG key: $KEY_ID"
+          gpg --list-keys
+
+      - name: Build DEB package
+        env:
+          BUILD_DIR: ${{ env.BUILD_DIR }}
+        run: |
+          chmod +x ./build-deb.sh
+          ./build-deb.sh "${{ needs.release.outputs.version }}" "${{ env.BUILD_DIR }}"
+
+      - name: Prepare repo dir and copy deb
+        run: |
+          set -eu
+          rm -rf $REPO_DIR
+          mkdir -p $REPO_DIR
+          cp ${{ env.BUILD_DIR }}/inotibatch_${{ needs.release.outputs.version }}_all.deb $REPO_DIR/
+
+      - name: Create Packages.gz and Release files
+        run: |
+          set -eu
+          cd $REPO_DIR
+          cat > override <<EOF
+          inotibatch  optional utils
+          EOF
+          dpkg-scanpackages . override > Packages
+          gzip -9 -c Packages > Packages.gz
+          apt-ftparchive release . > Release
+          rm -f override
+
+      - name: Sign Release and create InRelease (clearsigned)
+        run: |
+          set -eu
+          cd $REPO_DIR
+
+          # Write passphrase securely to temporary file
+          PASSPHRASE_FILE=$(mktemp)
+          printf '%s' '${{ secrets.GPG_PASSPHRASE }}' > "$PASSPHRASE_FILE"
+          chmod 600 "$PASSPHRASE_FILE"
+          cat "$PASSPHRASE_FILE"
+
+          # sign Release -> Release.gpg (detached)
+          gpg --batch --pinentry-mode loopback \
+              --passphrase-file "$PASSPHRASE_FILE" \
+              -abs -o Release.gpg Release
+
+          # create clearsigned InRelease
+          gpg --batch --pinentry-mode loopback \
+              --passphrase-file "$PASSPHRASE_FILE" \
+              --clearsign -o InRelease Release
+
+          # copy public key so consumers can download it
+          cp ../public.key .
+
+          # Delete temporary file securely
+          shred -u "$PASSPHRASE_FILE"
+
+      - name: Publish apt repo to gh-pages
+        if: needs.release.outputs.local_run == 'false'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./${{ env.REPO_DIR }}
+          publish_branch: ${{ env.GH_PAGES_BRANCH }}
+          
+      - name: Upload DEB to Github Release
+        if: needs.release.outputs.local_run == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.release.outputs.tag_name }}
+          files: ${{ env.REPO_DIR }}/inotibatch_${{ needs.release.outputs.version }}_all.deb
+
+      - name: Add job summary
+        run: |
+          {
+            echo "## 📦 Build & Publish Summary"
+            echo ""
+            echo "| Key        | Value |"
+            echo "|------------|-------|"
+            echo "| Version    | ${{ needs.release.outputs.version }} |"
+            echo "| Tag        | ${{ needs.release.outputs.tag_name }} |"
+            echo "| Local Run  | ${{ needs.release.outputs.local_run }} |"
+            echo ""
+            echo "### 🌐 Repository"
+            echo "[APT Repo on GitHub Pages](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/)"
+          } >> $GITHUB_STEP_SUMMARY

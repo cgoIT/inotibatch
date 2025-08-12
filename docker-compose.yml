@@ -1,0 +1,15 @@
+services:
+  inotibatch-test:
+    build:
+      context: test/
+      dockerfile: Dockerfile
+    container_name: inotibatch-test
+    volumes:
+      - .:/inotibatch
+      - ./test/test.conf:/config/test.conf
+      - ./test/log:/var/log/inotibatch
+      - ./test/data/source:/data/source
+      - ./test/data/dest:/data/dest
+    environment:
+      - TZ=Europe/Berlin
+    tty: true
