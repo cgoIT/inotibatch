@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/cgoIT/inotibatch/compare/v1.1.0...v1.2.0) (2025-08-12)
+
+
+### Features
+
+* restart previously running services after upgrade ([7857f93](https://github.com/cgoIT/inotibatch/commit/7857f9372ef0f4b3c4606740aace2e366cf34e23))
+
+
+### Bug Fixes
+
+* correctly handle events in inotibatch ([65b2b16](https://github.com/cgoIT/inotibatch/commit/65b2b1618af75d1a72443bfb1fdcd873eb160343))
+
 ## [1.1.0](https://github.com/cgoIT/inotibatch/compare/v1.0.0...v1.1.0) (2025-08-12)
 
 
