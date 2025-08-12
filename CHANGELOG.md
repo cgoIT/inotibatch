@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/cgoIT/inotibatch/compare/v1.2.1...v1.2.2) (2025-08-12)
+
+
+### Bug Fixes
+
+* better logging for restarted services ([0572686](https://github.com/cgoIT/inotibatch/commit/05726861520f6055f936a5caa316d9b1a1cfba97))
+* use restart instead of start in postinst ([65121d1](https://github.com/cgoIT/inotibatch/commit/65121d1e1048fd35ee373fba33ee35ae77e39c70))
+
 ## [1.2.1](https://github.com/cgoIT/inotibatch/compare/v1.2.0...v1.2.1) (2025-08-12)
 
 
