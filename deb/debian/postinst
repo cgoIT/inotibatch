@@ -18,12 +18,11 @@ systemctl daemon-reload || true
 
 if [ -f "$STATE_FILE" ]; then
   while read -r unit; do
-    [ -n "$unit" ] && systemctl start "$unit"
+    if [ -n "$unit" ]; then
+      echo "ℹ️ Restarting previously active service $unit"
+      systemctl restart "$unit"
+    fi
   done < "$STATE_FILE"
-
-  echo "ℹ️ Previously active services started again:"
-  cat "$STATE_FILE"
-
   rm -f "$STATE_FILE"
 else
   echo "ℹ️ No previously active services found. This is expected after the first install."
