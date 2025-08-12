@@ -1,0 +1,18 @@
+Package: inotibatch
+Source: inotibatch
+Version: 1.0.0
+Architecture: all
+Maintainer: Carsten Goetzinger <carsten@cgo-it.de>
+Depends: bash, inotify-tools, mailutils
+Filename: ./inotibatch_1.0.0_all.deb
+Size: 6708
+MD5sum: c90e7cc6da0e118c047521e658882fba
+SHA1: 47f6427c5af03991919b6678a6b5042d947a3208
+SHA256: c376112d1fdf8d352c1f46cb86f44ea5e6cb03f03a48ae114dbb849ace21b79e
+Section: utils
+Priority: optional
+Homepage: https://github.com/cgoIT/inotibatch
+Description: Configurable file-based sync and hook system using inotify
+ A flexible bash-based file synchronization tool using inotifywait,
+ with systemd integration, batch processing, logging, and hook support.
+
