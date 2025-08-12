@@ -1,14 +1,14 @@
 Package: inotibatch
 Source: inotibatch
-Version: 1.0.0
+Version: 1.1.0
 Architecture: all
 Maintainer: Carsten Goetzinger <carsten@cgo-it.de>
 Depends: bash, inotify-tools, mailutils
-Filename: ./inotibatch_1.0.0_all.deb
-Size: 6708
-MD5sum: c90e7cc6da0e118c047521e658882fba
-SHA1: 47f6427c5af03991919b6678a6b5042d947a3208
-SHA256: c376112d1fdf8d352c1f46cb86f44ea5e6cb03f03a48ae114dbb849ace21b79e
+Filename: ./inotibatch_1.1.0_all.deb
+Size: 6810
+MD5sum: 1a7249cd4edef6e5432b3ba58912ef95
+SHA1: 14d46678f34e85570ad88c0e8746522e8870d3b9
+SHA256: 03f5a652a5a5568bdcba32a010ae79904bbf6134f0c3c016d8bc031dc27c8164
 Section: utils
 Priority: optional
 Homepage: https://github.com/cgoIT/inotibatch
