@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/cgoIT/inotibatch/compare/v1.2.0...v1.2.1) (2025-08-12)
+
+
+### Bug Fixes
+
+* move state file for running services to tmp directory ([0c44d26](https://github.com/cgoIT/inotibatch/commit/0c44d269318cfadc0aed07355b1aa00f80281d6a))
+
 ## [1.2.0](https://github.com/cgoIT/inotibatch/compare/v1.1.0...v1.2.0) (2025-08-12)
 
 
