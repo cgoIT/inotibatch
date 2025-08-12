@@ -175,12 +175,12 @@ flush_batch() {
 
     if run_hooks "$POST_HOOK_DIR" "${files[@]}"; then
       for f in "${files[@]}"; do
-        echo "$f" >> "${PROCESSED_FILE}"
+        echo "$f" >> "$(date +'%F %T') ${PROCESSED_FILE}"
       done
     else
       echo "Post-hook execution failed" >&2
       for f in "${files[@]}"; do
-        echo "$f" >> "${ERRORED_FILE}"
+        echo "$f" >> "$(date +'%F %T') ${ERRORED_FILE}"
       done
 
       log "Post-hook execution failed" >&2
@@ -215,7 +215,8 @@ watch_batch_timeout() {
 }
 
 process_file() {
-  local src="$1"
+  local event="$1"
+  local src="$2"
   local rel_path="${src#$SOURCE_DIR/}"
   local dir_part
   dir_part=$(dirname "$rel_path")
@@ -227,25 +228,27 @@ process_file() {
 
   local dest="$(realpath -m "$TARGET_DIR/$dir_part/$target_base")"
 
+  log "Processing: event=$event, src=$src, dest=$dest"
+
   run_hooks "$PRE_HOOK_DIR" "$src" "$dest"
   run_action_script "$src" "$dest"
 
   queue_file_for_batch "$dest"
-  log "Processed file and stored for post-hook: $src -> $dest"
+  log "Processed file and stored for post-hook: src=$src, dest=$dest"
 }
 
 inotifywait_loop() {
-  local args=(-m -e close_write,create,modify --format '%w%f')
+  local args=(-m -e close_write,create,modify --format '%w%f %e')
   [[ "$RECURSIVE" == "true" ]] && args+=(-r)
 
   LOG_PREFIX="inotifywait"
-  inotifywait "${args[@]}" "$SOURCE_DIR" | while read -r line; do
-    if [[ "$line" = /* ]]; then
+  inotifywait "${args[@]}" "$SOURCE_DIR" | while read -r file event; do
+    if [[ "$file" = /* ]]; then
       local skip=false
-      if should_skip_file "$line"; then
+      if should_skip_file "$file"; then
         skip=true
       fi
-      $skip || process_file "$line" < /dev/null
+      $skip || process_file "$event" "$file" < /dev/null
     fi
   done
 }
