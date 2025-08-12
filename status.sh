@@ -12,8 +12,8 @@ else
   CONFIG_DIR="${CONFIG_DIR:-$SCRIPT_DIR/config}"
 fi
 
-printf "%-20s %-10s %-15s %-15s %-25s\n" "Instance" "Status" "Processed Files" "Errored Files" "Last Processed"
-printf -- "--------------------------------------------------------------------------------\n"
+printf "%-20s %-10s %-17s %-15s %-25s\n" "Instance" "Status" "Processed Files" "Errored Files" "Last Processed"
+printf -- "-------------------------------------------------------------------------------------\n"
 
 for conf_file in "$CONFIG_DIR"/*.conf; do
     instance_name="$(basename "$conf_file" .conf)"
@@ -48,5 +48,5 @@ for conf_file in "$CONFIG_DIR"/*.conf; do
         countErrored="0"
     fi
 
-    printf "%-20s %-10s %-15s %-15s %-25s\n" "$instance_name" "$status" "$countProcessed" "$countErrored" "$last_ts"
+    printf "%-20s %-10s %-17s %-15s %-25s\n" "$instance_name" "$status" "$countProcessed" "$countErrored" "$last_ts"
 done
