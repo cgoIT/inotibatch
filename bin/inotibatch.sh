@@ -175,12 +175,12 @@ flush_batch() {
 
     if run_hooks "$POST_HOOK_DIR" "${files[@]}"; then
       for f in "${files[@]}"; do
-        echo "$f" >> "$(date +'%F %T') ${PROCESSED_FILE}"
+        echo "$(date +'%F %T') $f" >> "${PROCESSED_FILE}"
       done
     else
       echo "Post-hook execution failed" >&2
       for f in "${files[@]}"; do
-        echo "$f" >> "$(date +'%F %T') ${ERRORED_FILE}"
+        echo "$(date +'%F %T') $f" >> "${ERRORED_FILE}"
       done
 
       log "Post-hook execution failed" >&2
@@ -238,11 +238,11 @@ process_file() {
 }
 
 inotifywait_loop() {
-  local args=(-m -e close_write,create,modify --format '%w%f %e')
+  local args=(-m -e close_write,create,modify --format '%w%f|%e')
   [[ "$RECURSIVE" == "true" ]] && args+=(-r)
 
   LOG_PREFIX="inotifywait"
-  inotifywait "${args[@]}" "$SOURCE_DIR" | while read -r file event; do
+  inotifywait "${args[@]}" "$SOURCE_DIR" | while IFS=$'|' read -r file event; do
     if [[ "$file" = /* ]]; then
       local skip=false
       if should_skip_file "$file"; then
