@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+STATE_FILE="/opt/inotibatch/active_instances"
+mkdir -p /opt/inotibatch
+
+# Alle laufenden Instanzen finden
+systemctl list-units --type=service --state=active 'inotibatch@*.service' \
+  | awk '/inotibatch@.*\.service/ {print $1}' > "$STATE_FILE"
+
+exit 0
