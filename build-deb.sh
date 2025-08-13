@@ -135,13 +135,17 @@ generate_debian_changelog() {
       flush_entry()
   }
   ' "$changelog_md" > "$changelog_out"
+
+  gzip -9 -f "$changelog_out"
+  mv "${changelog_out}.gz" "${changelog_out}.Debian.gz"
 }
 
 copy_files() {
     local PKG_DIR="$1"
+    cp deb/debian/* "${PKG_DIR}/DEBIAN/"
     cp -r status.sh bin actions hooks tools systemd logrotate "${PKG_DIR}/opt/$PKG/"
     cp -r config/* "${PKG_DIR}/etc/$PKG/"
-    cp README.md "${PKG_DIR}/usr/share/doc/$PKG"
+    cp deb/copyright README.md "${PKG_DIR}/usr/share/doc/$PKG"
     ln -s "/opt/$PKG/bin/inotibatch.sh" "${PKG_DIR}/usr/local/bin/inotibatch"
     ln -s "/opt/$PKG/status.sh" "${PKG_DIR}/usr/local/bin/inotibatch-status"
     ln -s "/opt/$PKG/tools/create-systemd-services.sh" "${PKG_DIR}/usr/local/bin/inotibatch-create-services"

@@ -11,6 +11,7 @@ ln -sf /opt/inotibatch/systemd/inotibatch@.service /etc/systemd/system/
 chown -R root:root /opt/inotibatch
 chown -R root:root /etc/inotibatch
 chown -R root:root /var/log/inotibatch
+chown -R root:root /usr/share/doc/inotibatch
 chown root:root /usr/local/bin/inotibatch*
 
 systemctl daemon-reexec || true
