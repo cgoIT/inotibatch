@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/cgoIT/inotibatch/compare/v1.2.3...v1.2.4) (2025-08-13)
+
+
+### Bug Fixes
+
+* correctly copy the debian scripts to DEBIAN/ ([609a5a2](https://github.com/cgoIT/inotibatch/commit/609a5a28c5c47c0240c0242a8f9efbc224b359f6))
+
 ## [1.2.3](https://github.com/cgoIT/inotibatch/compare/v1.2.2...v1.2.3) (2025-08-13)
 
 
