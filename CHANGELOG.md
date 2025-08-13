@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/cgoIT/inotibatch/compare/v1.2.2...v1.2.3) (2025-08-13)
+
+
+### Bug Fixes
+
+* **build:** install changelog to the right place ([02df1e2](https://github.com/cgoIT/inotibatch/commit/02df1e24e8d50ab65b95295d4ccd79b1615aa1de))
+
 ## [1.2.2](https://github.com/cgoIT/inotibatch/compare/v1.2.1...v1.2.2) (2025-08-12)
 
 
