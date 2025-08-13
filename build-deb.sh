@@ -29,7 +29,8 @@ mkdir -p "${PKG_DIR}" \
          "${PKG_DIR}/usr/local/bin" \
          "${PKG_DIR}/opt/$PKG/bin" \
          "${PKG_DIR}/etc/$PKG" \
-         "${PKG_DIR}/var/log/$PKG"
+         "${PKG_DIR}/var/log/$PKG" \
+         "${PKG_DIR}/usr/share/doc/$PKG" \
 
 # Copy debian control files
 cp -r deb/debian/* "${PKG_DIR}/DEBIAN/"
@@ -79,20 +80,21 @@ if [ -z "$CHANGELOG_ENTRIES" ]; then
   CHANGELOG_ENTRIES="  * No changes documented"
 fi
 
-# Generate debian/changelog output
+# Generate changelog output
 {
   echo "inotibatch (${VERSION}) stable; urgency=medium"
   echo
   echo "$CHANGELOG_ENTRIES"
   echo
   echo " -- cgoIT <info@cgo-it.de>  $(date -R)"
-} > "${PKG_DIR}/DEBIAN/changelog"
+} > "${PKG_DIR}/usr/share/doc/$PKG/changelog"
 
 echo "Debian changelog for version $VERSION generated in ${PKG_DIR}/DEBIAN/changelog"
 
 # Copy main script and subfolders
 cp -r status.sh bin actions hooks tools systemd logrotate "${PKG_DIR}/opt/$PKG/"
 cp -r config/* "${PKG_DIR}/etc/$PKG/"
+cp README.md "${PKG_DIR}/usr/share/doc/$PKG"
 ln -s "/opt/$PKG/bin/inotibatch.sh" "${PKG_DIR}/usr/local/bin/inotibatch"
 ln -s "/opt/$PKG/status.sh" "${PKG_DIR}/usr/local/bin/inotibatch-status"
 ln -s "/opt/$PKG/tools/create-systemd-services.sh" "${PKG_DIR}/usr/local/bin/inotibatch-create-services"
