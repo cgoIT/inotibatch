@@ -195,7 +195,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.release.outputs.tag_name }}
-          files: ${{ env.REPO_DIR }}/${{ env.PKG }}_${{ needs.release.outputs.version }}_${{ env.ARCH }}.deb
+          files: |
+            ${{ env.BUILD_DIR }}/${{ env.PKG }}_${{ needs.release.outputs.version }}_${{ env.ARCH }}.deb
+            ${{ env.BUILD_DIR }}/${{ env.PKG }}_${{ needs.release.outputs.version }}_${{ env.ARCH }}.dsc
+            public.key
 
       - name: Add job summary
         run: |
