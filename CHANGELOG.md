@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/cgoIT/inotibatch/compare/v1.3.0...v1.3.1) (2025-08-16)
+
+
+### Bug Fixes
+
+* fix upload to release step ([bc4f74b](https://github.com/cgoIT/inotibatch/commit/bc4f74b6852107128f623e88da406c35cfde046a))
+
 ## [1.3.0](https://github.com/cgoIT/inotibatch/compare/v1.2.4...v1.3.0) (2025-08-16)
 
 
