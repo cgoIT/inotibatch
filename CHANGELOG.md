@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.2](https://github.com/cgoIT/inotibatch/compare/v1.3.1...v1.3.2) (2025-08-16)
+
+
+### Bug Fixes
+
+* add correct path to actions and hooks in example conf ([7b625a3](https://github.com/cgoIT/inotibatch/commit/7b625a36d1b015c0da7c29b5a5277d3a3cf64200))
+* correctly generate Release and InRelease files ([caebf64](https://github.com/cgoIT/inotibatch/commit/caebf6421ab4f666cba6a9de1790a98f60e6e811))
+
 ## [1.3.1](https://github.com/cgoIT/inotibatch/compare/v1.3.0...v1.3.1) (2025-08-16)
 
 
