@@ -3,4 +3,4 @@ Label: inotibatch
 Suite: noble
 Codename: noble
 Components: main
-Architectures: amd64 source
+Architectures: all source
