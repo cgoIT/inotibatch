@@ -179,8 +179,8 @@ jobs:
           echo "Generate Packages.gz"
           cd ${{ env.REPO_DIR }}
           # Packages für Binary-Pakete
-          apt-ftparchive packages pool/main > dists/${{ env.DIST }}/main/binary-${{ env.ARCH }}/Packages
-          gzip -c9 dists/${{ env.DIST }}/main/binary-${{ env.ARCH }}/Packages > dists/${{ env.DIST }}/main/binary-${{ env.ARCH }}/Packages.gz
+          apt-ftparchive packages pool/main > dists/${{ env.DIST }}/main/binary-amd64/Packages
+          gzip -c9 dists/${{ env.DIST }}/main/binary-amd64/Packages > dists/${{ env.DIST }}/main/binary-amd64/Packages.gz
 
           echo "Generate Sources.gz"
           apt-ftparchive sources pool/main > dists/${{ env.DIST }}/main/source/Sources
