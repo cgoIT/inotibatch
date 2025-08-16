@@ -1,8 +1,6 @@
 #!/bin/sh
 set -e
 
-sed -i "s|/path/to/inotibatch.sh|/opt/inotibatch/bin/inotibatch.sh|g" /opt/inotibatch/systemd/inotibatch@.service
-
 case "$1" in
   configure)
     # systemd unit registrieren
