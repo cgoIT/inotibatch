@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/cgoIT/inotibatch/compare/v1.2.4...v1.3.0) (2025-08-16)
+
+
+### Features
+
+* optimize build script to use standard debuild process ([56ab46c](https://github.com/cgoIT/inotibatch/commit/56ab46ca3aa9d5e2d201715d354c8b8cc29af2ec))
+* use some more standards for logrotate and systemd ([c252b9d](https://github.com/cgoIT/inotibatch/commit/c252b9d83fdd04c75b244beeb6e08342b6e7e687))
+
+
+### Bug Fixes
+
+* fix pipeline to detect local runs with act ([6542e1e](https://github.com/cgoIT/inotibatch/commit/6542e1e25739b9a5bd52dbc81813f803b3be53fe))
+
 ## [1.2.4](https://github.com/cgoIT/inotibatch/compare/v1.2.3...v1.2.4) (2025-08-13)
 
 
