@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.5](https://github.com/cgoIT/inotibatch/compare/v1.3.4...v1.3.5) (2025-08-16)
+
+
+### Bug Fixes
+
+* fix postinst file ([9f06814](https://github.com/cgoIT/inotibatch/commit/9f068140c73a03d492d73aa93a3da37d13e892fd))
+
 ## [1.3.4](https://github.com/cgoIT/inotibatch/compare/v1.3.3...v1.3.4) (2025-08-16)
 
 
