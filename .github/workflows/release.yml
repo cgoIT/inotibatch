@@ -18,7 +18,7 @@ jobs:
       - name: Detect local run
         id: detect-local-run
         run: |
-          set -eu
+          set -e
 
           if [ -n "${ACT}" ]; then
             echo "local_run=true" >> $GITHUB_OUTPUT
