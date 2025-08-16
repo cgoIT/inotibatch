@@ -176,16 +176,32 @@ jobs:
           echo "Copy public key"
           cp public.key ${{ env.REPO_DIR }}
 
-          echo "Generate and sign release files"
+          echo "Generate Packages.gz"
           cd ${{ env.REPO_DIR }}
+          # Packages für Binary-Pakete
+          apt-ftparchive packages pool/main > dists/${{ env.DIST }}/main/binary-${{ env.ARCH }}/Packages
+          gzip -c9 dists/${{ env.DIST }}/main/binary-${{ env.ARCH }}/Packages > dists/${{ env.DIST }}/main/binary-${{ env.ARCH }}/Packages.gz
 
-          # Generate Release file in the correct DIST folder
-          apt-ftparchive release dists/${{ env.DIST }} > dists/${{ env.DIST }}/Release
+          echo "Generate Sources.gz"
+          apt-ftparchive sources pool/main > dists/${{ env.DIST }}/main/source/Sources
+          gzip -c9 dists/${{ env.DIST }}/main/source/Sources > dists/${{ env.DIST }}/main/source/Sources.gz
 
-          # Detached signature for apt
+          echo "Generate Release file with Codename"
+          cat > apt-ftparchive.conf <<EOF
+          APT::FTPArchive::Release {
+            Origin "cgoIT";
+            Label "${{ env.PKG }}";;
+            Suite "${{ env.DIST }}";
+            Codename "${{ env.DIST }}";
+            Architectures "amd64 all";
+            Components "main";
+          };
+          EOF
+
+          apt-ftparchive -c apt-ftparchive.conf release dists/${{ env.DIST }} > dists/${{ env.DIST }}/Release
+
+          echo "Sign Release and create InRelease"
           gpg --batch --yes --pinentry-mode loopback -abs -o dists/${{ env.DIST }}/Release.gpg dists/${{ env.DIST }}/Release
-
-          # InRelease (clearsign) for apt
           gpg --batch --yes --pinentry-mode loopback --clearsign -o dists/${{ env.DIST }}/InRelease dists/${{ env.DIST }}/Release
 
       - name: Publish apt repo to gh-pages
