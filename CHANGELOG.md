@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.3](https://github.com/cgoIT/inotibatch/compare/v1.3.2...v1.3.3) (2025-08-16)
+
+
+### Bug Fixes
+
+* add codename and sources to ppa ([73eacbd](https://github.com/cgoIT/inotibatch/commit/73eacbdf45d6e7a6da143f0da5e83dd6af0cf221))
+* make architecture configurable ([51aea3d](https://github.com/cgoIT/inotibatch/commit/51aea3de1ff5fe453652cc2963caa0ac47c79a5d))
+
 ## [1.3.2](https://github.com/cgoIT/inotibatch/compare/v1.3.1...v1.3.2) (2025-08-16)
 
 
