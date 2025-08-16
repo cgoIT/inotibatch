@@ -101,7 +101,23 @@ jobs:
           set -eu
 
           mkdir -p ${{ env.BUILD_DIR }}
-          rsync -a --exclude ${{ env.BUILD_DIR }}/ ./ "${{ env.BUILD_DIR }}/${{ env.PKG }}-${{ needs.release.outputs.version }}/"
+          rsync -a \
+            --exclude ${{ env.BUILD_DIR }}/ \
+            --exclude systemd/ \
+            --exclude logrotate/ \
+            ./ "${{ env.BUILD_DIR }}/${{ env.PKG }}-${{ needs.release.outputs.version }}/"
+
+          echo "Prepare systemd files"
+          for systemd_file in systemd/*.service; do
+            sed -i "s|/path/to/inotibatch.sh|/usr/share/inotibatch/bin/inotibatch.sh|g" "$systemd_file"
+          done
+          cp systemd/*.service ${{ env.BUILD_DIR }}/${{ env.PKG }}-${{ needs.release.outputs.version }}/debian/
+
+          echo "Prepare logrotate files"
+          for logrotate_file in logrotate/*; do
+            filename=$(basename $logrotate_file)
+            cp $logrotate_file ${{ env.BUILD_DIR }}/${{ env.PKG }}-${{ needs.release.outputs.version }}/debian/$filename.logrotate
+          done
 
       - name: Import GPG key
         id: import-gpg-key

@@ -1,8 +1,6 @@
 status.sh usr/share/inotibatch/
-/bin/ usr/share/inotibatch/bin/
+bin/ usr/share/inotibatch/bin/
 actions/ usr/share/inotibatch/actions/
 hooks/ usr/share/inotibatch/hooks/
 tools/ usr/share/inotibatch/tools/
-systemd/ usr/share/inotibatch/systemd/
-logrotate/ usr/share/inotibatch/logrotate/
 config/*.example etc/inotibatch/

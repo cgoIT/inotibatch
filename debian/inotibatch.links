@@ -1,5 +1,3 @@
 usr/share/inotibatch/bin/inotibatch.sh usr/bin/inotibatch
 usr/share/inotibatch/status.sh usr/bin/inotibatch-status
 usr/share/inotibatch/tools/create-systemd-services.sh usr/bin/inotibatch-create-services
-usr/share/inotibatch/systemd/inotibatch@.service etc/systemd/system
-usr/share/inotibatch/logrotate/inotibatch etc/logrotate.d/inotibatch
