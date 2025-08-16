@@ -1,14 +1,20 @@
 .DS_Store
 *.log
+/.idea
+/.git
 
 /test/data/source/*
 /test/data/dest/*
 
+debian/control
+debian/changelog
+debian/tmp/
+
+# For changelog generation test
 changelog
 debian-changelog.sh
 
 # ACT
 /build
-/repo
 .secrets
 run-action.sh
