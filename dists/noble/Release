@@ -1,39 +1,39 @@
 Architectures: amd64 all
 Codename: noble
 Components: main
-Date: Sat, 16 Aug 2025 21:17:04 +0000
+Date: Sat, 16 Aug 2025 21:26:22 +0000
 Label: inotibatch
 Origin: cgoIT
 Suite: noble
 MD5Sum:
- 854ce7c692412fccf89aa85f258bf885              141 Release
- f8d62374d2ae193e2663ac4e151e16cd              802 main/binary-amd64/Packages
- 311390cd7c3edff8da5bca912c650523              547 main/binary-amd64/Packages.gz
+ a6593e28dbd492821c8425a603055912              141 Release
+ 6e0f83b9bbd1a88f7a57d313b6fe7ae9              802 main/binary-amd64/Packages
+ 849f753f0c1bdc54fe053e982f0d6414              545 main/binary-amd64/Packages.gz
  199ada6deab7343de34e5cd6b95fc8f6               88 main/binary-amd64/Release
  fa7073cc7896808cea0a3166b755a06f               89 main/source/Release
- ddf1fddc3d6603a2966c75287795e723             1144 main/source/Sources
- 41f0f054c69c22cd9b6eb940fe87a07b              655 main/source/Sources.gz
+ e0c42565dcad4b359f9eef47254fc716             1144 main/source/Sources
+ d7efcba4daa219a095f5ef28977f7eb1              656 main/source/Sources.gz
 SHA1:
- da7940830bbdccba70d8472a68a3b3a38553e345              141 Release
- b7907fd2aaafea9c9da2a9e4c5144b93b7059d3a              802 main/binary-amd64/Packages
- f62b361cd1372294bf374caa46741a6f2568afa0              547 main/binary-amd64/Packages.gz
+ 17e799b2bdb033fe33743a3ff9b52559384aa5f7              141 Release
+ b076c298749fe21e1f9fd04ff834ca8eeb9adac9              802 main/binary-amd64/Packages
+ ceccc55339c02d7bb6a044a863a58841da5c4a12              545 main/binary-amd64/Packages.gz
  94d822ed02d08142f2c40c787dd2d76e8ece6ef3               88 main/binary-amd64/Release
  abecac382e1cea64af81addd398e8287ec8b3608               89 main/source/Release
- 51ae4a08aa08fc6de34e4ac4a54c412c901156d4             1144 main/source/Sources
- 67c66a762c5675f6ec6d700e41e1ac459a772911              655 main/source/Sources.gz
+ 3b9377e748e635bbfdf3bf1ff6068939c8226ccc             1144 main/source/Sources
+ 5e8eb215d127cc06823f0ef02a223b7ca1c30a3d              656 main/source/Sources.gz
 SHA256:
- de1dde9f2d96300ad4c8e874a55002205bfd3e012f8bdde2ca653baaf6d68e53              141 Release
- 77ffca1a835ea18c476b43843fc2e2b3cbae816ad6543cb4d07cd67ca6997002              802 main/binary-amd64/Packages
- b51aad34176c9c13b805376f5d3bd1ac1d3b59bee593f1c8b03cc80deb667735              547 main/binary-amd64/Packages.gz
+ 91bbfad416322ad469e173f1a8a0d2b812f3a48e0e656f85806f7c49a0f8a686              141 Release
+ fc46c0c59fa95c9ea733687438dd2e37d24c37bc97ca8b0311611ad718d5e81f              802 main/binary-amd64/Packages
+ 43faef129067b5190c4366f2e21a60c37b7df963c3b07a65c3e03f8828306461              545 main/binary-amd64/Packages.gz
  cc735d49c503902320975f768b91b612cf2c5ad44800cb71e6d470375b3b76f8               88 main/binary-amd64/Release
  e36b6ecc06fdf81766157f33e88054fea74127b1fe6a2ff8d8e5d29ea75787c4               89 main/source/Release
- b126cb7cf160269574211226b5db5934f03b538ad35137ad584869176a6d7022             1144 main/source/Sources
- 4c4f600a90a593b834d67a7c22e0990ab3f2a3323d500b043dc132d489d94b41              655 main/source/Sources.gz
+ cf9a2dbd9c807dd7015e3bbe704d43a6fb33da9a9794e96d5149a61047d2185b             1144 main/source/Sources
+ e95432465de39371deae9814d7e824b46eebedf5bb1a7a5e8e49e5443732eba3              656 main/source/Sources.gz
 SHA512:
- f8fcef686c79c7781abfa0356743347223b22febd391b0933a77ad57375b15aec9b86a4ac4e5a55bdcb6c5eb91ad33cd349d14d85ceb88b5c7c4c55140528f88              141 Release
- 2545c11d9c39def9d8ba1229125ed3bd3f22145ce961d55d87559a83ee78d71b9efeb1b65d42047600178576c93b9229f46cc17c47ac7f887fce6a689acbcaac              802 main/binary-amd64/Packages
- 7407cd7ea181f85ec211dc0a539becade182efd7b29f7fc835c7a6cb5f0ff5c4c32a6942c4f6925ccf4df1246b99b1fb54af9875657929db13ea96621357881a              547 main/binary-amd64/Packages.gz
+ efcedba582d464582447716b360fb0d0cbd5af59f4c4cdf453e3f939ef917ab0a7ffb788dac5b4cdd71d80ed47f750c1265cbb4b78724965bb734984fd885aa8              141 Release
+ d4db52363daec54207c257bab48392a08b4db917981d80d41d3b3b163c577e77d2f84f829619d6f8a07137b7cad2ac17f7f847daed6b72d76447fc59f4c1ed89              802 main/binary-amd64/Packages
+ 8860847cdd504d1f134c125f767cb1bf86164b5d335c77e0cd50d90c138aa35fcf1538e87334a566cf4193bc2dc2d033553d62d258a1c97fa398c2e9cd053219              545 main/binary-amd64/Packages.gz
  795256635f8cbd7be77411af0b21cae3fd7f86dee28e540f5aa0094822dd0a12ac3691f993d89df4e474ebb339994e9276b2778a53fbe5a3ff22977fd0e3c91f               88 main/binary-amd64/Release
  4770ab571e30dd6ed182f1b1a955249e4081d2cfe5c52b1884ba2ac6178a08fbed7cf9798ef22e476fba0389b87fe50065ed7faabe16d8dfa0f46c0ba779919b               89 main/source/Release
- b64f5992bf63e3b40a438cbe9ee8d968024fcab746afc6749336edb54f31cb05f7ec6ac4b90be1b5efb804af01a8a5e081b3d4bc8ccdf9b0d6c56b8c6d288147             1144 main/source/Sources
- d36ca7ea09627fb96b19e6cef5779e9b5c9c94e61e65490743f3b5b897d0361ca9dc1cf09d0a57d8dadee9f5461d039878dd2d545c50638e628d8e399676ece2              655 main/source/Sources.gz
+ 8965aa1d7965bbcadfc0a8244d3274d58ad85dc33c55fe12b061aecbcce6778b5413f61a2e2bf895641381b8e548d67aa9bc25f745825ca7892ea04b4f075908             1144 main/source/Sources
+ 88b150fc1430343d52ba6988c0d298634f13cc437c31e030e259a5067389207e8c9e787fdd49070a9c61778164c6477bcf5bea2a3003706c099f4f859f0d071a              656 main/source/Sources.gz
