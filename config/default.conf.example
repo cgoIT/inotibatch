@@ -10,9 +10,9 @@ EXCLUDE_PATTERNS=("*.tmp" "*.part" "~*")
 SANITIZE_FILENAMES=true
 
 # Action script and hooks
-ACTION_SCRIPT=/opt/inotibatch/actions/debug.sh
-PRE_HOOK_DIR=/opt/inotibatch/hooks/pre-hook.d
-POST_HOOK_DIR=/opt/inotibatch/hooks/post-hook.d
+ACTION_SCRIPT=/usr/share/inotibatch/actions/debug.sh
+PRE_HOOK_DIR=/usr/share/inotibatch/hooks/pre-hook.d
+POST_HOOK_DIR=/usr/share/inotibatch/hooks/post-hook.d
 POST_HOOK_BATCH_SIZE=20
 POST_HOOK_IDLE_TIMEOUT=30
 
