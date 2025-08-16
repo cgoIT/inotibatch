@@ -1,0 +1,28 @@
+Origin: inotibatch
+Label: inotibatch
+Suite: noble
+Codename: noble
+Date: Sat, 16 Aug 2025 19:46:07 UTC
+Architectures: amd64
+Components: main
+MD5Sum:
+ 35caed20a80f77be438218edb88a2345 665 main/binary-amd64/Packages
+ 3db7396317a4c76ceb1be0c70f7d410f 454 main/binary-amd64/Packages.gz
+ 199ada6deab7343de34e5cd6b95fc8f6 88 main/binary-amd64/Release
+ 2324f9756c412f177622fedc5a2c72fc 848 main/source/Sources
+ 4d5a0d43357d19e002d75e062c1479ea 500 main/source/Sources.gz
+ fa7073cc7896808cea0a3166b755a06f 89 main/source/Release
+SHA1:
+ b1ebdee162c1eecdae4462bd26ae868780260d62 665 main/binary-amd64/Packages
+ df7f19b87a867eb94246faa6cf28434a96c38ad6 454 main/binary-amd64/Packages.gz
+ 94d822ed02d08142f2c40c787dd2d76e8ece6ef3 88 main/binary-amd64/Release
+ ea295fa38fdaa79413d5151ae7867e0da3a1f819 848 main/source/Sources
+ 6235d0ed8202a15132f07b3f4a6b197f5a391131 500 main/source/Sources.gz
+ abecac382e1cea64af81addd398e8287ec8b3608 89 main/source/Release
+SHA256:
+ 5db09cf6f66da7f5107f7e69600b2f1f08762b2c4ffa126b41c47a445f0afa01 665 main/binary-amd64/Packages
+ f0a7d5390f3afdf3c826fe4e8a4e88a04374e6088993babd3c6ba7d1a3571d0a 454 main/binary-amd64/Packages.gz
+ cc735d49c503902320975f768b91b612cf2c5ad44800cb71e6d470375b3b76f8 88 main/binary-amd64/Release
+ 65dcbfa7ed00ad21b1fd5292d1730c1a7dc3ccf5f377804c3a4a4c056e72df31 848 main/source/Sources
+ 51b5fde271dfcf420e128a988c1c9e19db81ec6bc15e208f5cfbdd07687a34c5 500 main/source/Sources.gz
+ e36b6ecc06fdf81766157f33e88054fea74127b1fe6a2ff8d8e5d29ea75787c4 89 main/source/Release

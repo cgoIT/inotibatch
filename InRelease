@@ -1,0 +1,52 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Date: Sat, 16 Aug 2025 19:46:07 +0000
+MD5Sum:
+ b8249c04f819d296ee0e62357e003206               38 Release
+ 408e4483e5b79998d28bb4975fc8673b             1518 dists/noble/Release
+ 35caed20a80f77be438218edb88a2345              665 dists/noble/main/binary-amd64/Packages
+ 3db7396317a4c76ceb1be0c70f7d410f              454 dists/noble/main/binary-amd64/Packages.gz
+ 199ada6deab7343de34e5cd6b95fc8f6               88 dists/noble/main/binary-amd64/Release
+ fa7073cc7896808cea0a3166b755a06f               89 dists/noble/main/source/Release
+ 4d5a0d43357d19e002d75e062c1479ea              500 dists/noble/main/source/Sources.gz
+SHA1:
+ ef51077b145c4dc61775a651c3c51771a9ae0a74               38 Release
+ 6842987558f9a7f86c21bda2c4ffbb5f937fab9d             1518 dists/noble/Release
+ b1ebdee162c1eecdae4462bd26ae868780260d62              665 dists/noble/main/binary-amd64/Packages
+ df7f19b87a867eb94246faa6cf28434a96c38ad6              454 dists/noble/main/binary-amd64/Packages.gz
+ 94d822ed02d08142f2c40c787dd2d76e8ece6ef3               88 dists/noble/main/binary-amd64/Release
+ abecac382e1cea64af81addd398e8287ec8b3608               89 dists/noble/main/source/Release
+ 6235d0ed8202a15132f07b3f4a6b197f5a391131              500 dists/noble/main/source/Sources.gz
+SHA256:
+ e4b3d79453a320413b98a8d32c9c26e9188a9b91199f815c85b507d9d22580d1               38 Release
+ 9e561b774dc2b50e5fadb197d18f984fae873edd1553df9c981a599818eec24e             1518 dists/noble/Release
+ 5db09cf6f66da7f5107f7e69600b2f1f08762b2c4ffa126b41c47a445f0afa01              665 dists/noble/main/binary-amd64/Packages
+ f0a7d5390f3afdf3c826fe4e8a4e88a04374e6088993babd3c6ba7d1a3571d0a              454 dists/noble/main/binary-amd64/Packages.gz
+ cc735d49c503902320975f768b91b612cf2c5ad44800cb71e6d470375b3b76f8               88 dists/noble/main/binary-amd64/Release
+ e36b6ecc06fdf81766157f33e88054fea74127b1fe6a2ff8d8e5d29ea75787c4               89 dists/noble/main/source/Release
+ 51b5fde271dfcf420e128a988c1c9e19db81ec6bc15e208f5cfbdd07687a34c5              500 dists/noble/main/source/Sources.gz
+SHA512:
+ 25222cf64f13622c0bd0d956a5d68ff5d4286cfbc674d203701d9ae895439dcc639b075284f2862000e83442fd72ea9daf46ed1f45078fb490c49a45aef3d7a9               38 Release
+ d650a2691b52cc9ba4bedd4252b8a0e40ac82458d8ee6c3d902653006171c04ce860dd9f4dcaf9a2d75421587aed80f22e43a8c9fb86011e631084823a267b3a             1518 dists/noble/Release
+ 7863138bfd03c2c631c7356fa1f80b6c2df71e47e7b358c93c3ef2307a94546ab3b92a5829a43018681f96924af5967fe0ea420af4054aaf8a9caaa2b88cce63              665 dists/noble/main/binary-amd64/Packages
+ 62e5fc1af5a1885acebff1ad685b55c2f2052aa90b56da475b89e256ce0f64bb20dd2af3510f3a2b0ae757c34dcf862ae644b9141669ec29eeb374147338bd49              454 dists/noble/main/binary-amd64/Packages.gz
+ 795256635f8cbd7be77411af0b21cae3fd7f86dee28e540f5aa0094822dd0a12ac3691f993d89df4e474ebb339994e9276b2778a53fbe5a3ff22977fd0e3c91f               88 dists/noble/main/binary-amd64/Release
+ 4770ab571e30dd6ed182f1b1a955249e4081d2cfe5c52b1884ba2ac6178a08fbed7cf9798ef22e476fba0389b87fe50065ed7faabe16d8dfa0f46c0ba779919b               89 dists/noble/main/source/Release
+ 0e0ef497c35cadc0ce8cee573d140ca9f66146326e706b61ddd6e24cdd796fb859269bb15a3f88fc67014508329102355725657ebf4b42734d1edfb33a7bc14d              500 dists/noble/main/source/Sources.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE2s5eZVMhEPjs00LiN7iXjROr174FAmig4AAACgkQN7iXjROr
+176MkRAAnkLKvA/5puOLNjM5kq0l0NvD6ZMSekw+ahwN0nTq68ECnVPsgrSfzYkJ
+iKX3TD0uqDbAaRHsu2kcCC5Ff8R4Fx/cqUV73RYuwoPStRvOc+xvnTZYujy0bIv7
+jRKo2DUxY5cz1C/Uzp9hQAJig5bqiFpUUxSWLadWCUKtkvq2/z+jF6IL6m+CaWrj
+6QAe6PRvrBbzPPG+NFTAoTKhdayaLSoZKmIn73tsQVB7dy2GVmGEyB525RaitinG
+1MX/sRjNe2gxXeK2AcHLII5L9pw4sHOaEvCFvqqCagQhBq2Ho2OZY/cVFtGo9ReE
+2IWwxNbUfbqV+8IoADe9lDknkJA0JDQotxs0FCwTTmdUGgN1Ee8goJ83hUuEu6D6
+wCI2VZfsZdVl4zu6d4eDjOaAaZp7rsZ4CixMoJpxQajkCJqL5P755s7Vxqie2tbG
+VY3zOB/q5/BhWJVEqy8+cs908HrTD9spZyQbjz6QTz18V6MFRP6hxU3tDEAim1mQ
+f3gJ1ADqYmEN7BIlTjD5bVq0j59Rvf1HIMKsjZgjRrseLhfC9B6v8/W5G6mAqM9y
+uWhdyHDFAbMUhHUABXU1gyA8TuSYDAsz0juA4nuGNbtTo21mhijDbbgSxsIaBj8g
+tnej8rrPYuL+zO/Nr4rK5Uxam/XrbwUqGCC4ZGu0rz8Fd/0+Q/M=
+=gsqE
+-----END PGP SIGNATURE-----
