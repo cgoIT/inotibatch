@@ -41,14 +41,21 @@ You can install `inotibatch` via apt.
 curl -fsSL https://cgoit.github.io/inotibatch/public.key \
   | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/inotibatch.gpg
 
-# Add the APT source (distribution: unstable, component: main)
-echo "deb [signed-by=/etc/apt/trusted.gpg.d/inotibatch.gpg] https://cgoit.github.io/inotibatch unstable main" \
+# Add the APT source (distribution: noble, component: main)
+echo "deb [signed-by=/etc/apt/trusted.gpg.d/inotibatch.gpg] https://cgoit.github.io/inotibatch/ noble main" \
   | sudo tee /etc/apt/sources.list.d/inotibatch.list
 
+# Optional: include source packages
+echo "deb-src [signed-by=/etc/apt/trusted.gpg.d/inotibatch.gpg] https://cgoit.github.io/inotibatch/ noble main" \
+  | sudo tee -a /etc/apt/sources.list.d/inotibatch.list
+
+# Update package lists
 sudo apt update
+
+# Install the package
 sudo apt install inotibatch
 
-# after you've created the config files at /etc/inotibatch install the systemd services
+# After you've created the config files at /etc/inotibatch, install the systemd services
 sudo inotibatch-create-services
 ```
 

@@ -171,16 +171,22 @@ jobs:
           reprepro -b ${{ env.REPO_DIR }} includedeb \
             ${{ env.DIST }} ${{ env.BUILD_DIR }}/${{ env.PKG }}_${{ needs.release.outputs.version }}_${{ env.ARCH }}.deb
 
-      - name: Sign Release / InRelease && copy private key
+      - name: Sign Release / InRelease && copy public key
         run: |
           echo "Copy public key"
           cp public.key ${{ env.REPO_DIR }}
 
           echo "Generate and sign release files"
           cd ${{ env.REPO_DIR }}
-          apt-ftparchive release . > Release
-          gpg --batch --yes --pinentry-mode loopback -abs -o Release.gpg Release
-          gpg --batch --yes --pinentry-mode loopback --clearsign -o InRelease Release
+
+          # Generate Release file in the correct DIST folder
+          apt-ftparchive release dists/${{ env.DIST }} > dists/${{ env.DIST }}/Release
+
+          # Detached signature for apt
+          gpg --batch --yes --pinentry-mode loopback -abs -o dists/${{ env.DIST }}/Release.gpg dists/${{ env.DIST }}/Release
+
+          # InRelease (clearsign) for apt
+          gpg --batch --yes --pinentry-mode loopback --clearsign -o dists/${{ env.DIST }}/InRelease dists/${{ env.DIST }}/Release
 
       - name: Publish apt repo to gh-pages
         if: needs.release.outputs.local_run == 'false'
