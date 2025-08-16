@@ -37,8 +37,14 @@ Optionally, post-processing hooks and batching logic can be configured.
 You can install `inotibatch` via apt.
 
 ```bash
-curl -fsSL https://cgoit.github.io/inotibatch/public.key | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/cgoIT.gpg
-echo "deb [signed-by=/etc/apt/trusted.gpg.d/cgoIT.gpg] https://cgoit.github.io/inotibatch/ ./" | sudo tee /etc/apt/sources.list.d/inotibatch.list
+# Import the public signing key
+curl -fsSL https://cgoit.github.io/inotibatch/public.key \
+  | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/inotibatch.gpg
+
+# Add the APT source (distribution: unstable, component: main)
+echo "deb [signed-by=/etc/apt/trusted.gpg.d/inotibatch.gpg] https://cgoit.github.io/inotibatch unstable main" \
+  | sudo tee /etc/apt/sources.list.d/inotibatch.list
+
 sudo apt update
 sudo apt install inotibatch
 

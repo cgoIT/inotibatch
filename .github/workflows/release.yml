@@ -18,6 +18,8 @@ jobs:
       - name: Detect local run
         id: detect-local-run
         run: |
+          set -eu
+
           if [ -n "${ACT}" ]; then
             echo "local_run=true" >> $GITHUB_OUTPUT
           else
@@ -33,11 +35,18 @@ jobs:
 
       - name: Set outputs
         id: set-outputs
+        env:
+          ACT: ${{ env.ACT }}
         run: |
+          set -eu
+
           if [ "${ACT}" = "true" ]; then
+            VERSION=$(grep -oP '^## \[\K[0-9]+\.[0-9]+\.[0-9]+' "CHANGELOG.md" | head -n 1)
             echo "release_created=true" >> $GITHUB_OUTPUT
-            echo "tag_name=v1.1.2" >> $GITHUB_OUTPUT
-            echo "version=1.1.2" >> $GITHUB_OUTPUT
+            echo "tag_name=v${VERSION}" >> $GITHUB_OUTPUT
+            echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+            rm -rf build/ repo/
           else
             echo "release_created=${{ steps.release.outputs.release_created }}" >> $GITHUB_OUTPUT
             echo "tag_name=${{ steps.release.outputs.tag_name }}" >> $GITHUB_OUTPUT
@@ -52,7 +61,12 @@ jobs:
     env:
       GH_PAGES_BRANCH: gh-pages
       BUILD_DIR: build
-      REPO_DIR: repo
+      REPO_DIR: build/ppa
+      PKG: inotibatch
+      DIST: noble
+      URGENCY: medium
+      MAINTAINER: cgoIT <info@cgo-it.de>
+      ARCH: all
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -65,87 +79,108 @@ jobs:
             devscripts \
             debhelper \
             dh-make \
+            reprepro \
             git \
             gnupg \
-            curl
+            curl \
+            pandoc
 
-      - name: Import GPG private key
+      - name: Prepare control & changelog files
         env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          PKG: ${{ env.PKG }}
+          DIST: ${{ env.DIST }}
+          URGENCY: ${{ env.URGENCY }}
+          MAINTAINER: ${{ env.MAINTAINER }}
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          ./build-scripts/generate-control.sh
+          ./build-scripts/generate-changelog.sh
+
+      - name: Prepare build directory
         run: |
           set -eu
-          mkdir -p ~/.gnupg
-          chmod 700 ~/.gnupg
 
-          if echo "$GPG_PRIVATE_KEY" | grep -qE '^[A-Za-z0-9+/=]+$'; then
-            echo "Detected Base64-encoded GPG key"
-            echo "$GPG_PRIVATE_KEY" | base64 --decode | gpg --batch --import
-          else
-            echo "Detected ASCII-armored GPG key"
-            echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          mkdir -p ${{ env.BUILD_DIR }}
+          rsync -a \
+            --exclude ${{ env.BUILD_DIR }}/ \
+            --exclude systemd/ \
+            --exclude logrotate/ \
+            ./ "${{ env.BUILD_DIR }}/${{ env.PKG }}-${{ needs.release.outputs.version }}/"
+
+          echo "Prepare systemd files"
+          for systemd_file in systemd/*.service; do
+            sed -i "s|/path/to/inotibatch.sh|/usr/share/inotibatch/bin/inotibatch.sh|g" "$systemd_file"
+          done
+          cp systemd/*.service ${{ env.BUILD_DIR }}/${{ env.PKG }}-${{ needs.release.outputs.version }}/debian/
+
+          echo "Prepare logrotate files"
+          for logrotate_file in logrotate/*; do
+            filename=$(basename $logrotate_file)
+            cp $logrotate_file ${{ env.BUILD_DIR }}/${{ env.PKG }}-${{ needs.release.outputs.version }}/debian/$filename.logrotate
+          done
+
+      - name: Import GPG key
+        id: import-gpg-key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Build Debian package
+        working-directory: ./${{ env.BUILD_DIR }}/${{ env.PKG }}-${{ needs.release.outputs.version }}
+        env:
+          KEY_FINGERPRINT: ${{ steps.import-gpg-key.outputs.fingerprint }}
+        run: |
+          set -eu
+
+          echo "Building signed source package and binary package..."
+          DEBEMAIL="info@cgo-it.de" DEBFULLNAME="cgoIT" \
+          debuild -sa -us -uc -k"${{ env.KEY_FINGERPRINT }}"
+
+          echo "Debian packages successfully built."
+
+      - name: Checkout gh-pages for PPA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.GH_PAGES_BRANCH }}
+          path: ${{ env.REPO_DIR }}
+
+      - name: Update PPA
+        run: |
+          set -eu
+
+          if [ ! -f "${{ env.REPO_DIR }}/conf/distributions" ]; then
+            echo "Prepare repo"
+            mkdir -p ${{ env.REPO_DIR }}/conf
+            mkdir -p ${{ env.REPO_DIR }}/pool
+
+            cat > ${{ env.REPO_DIR }}/conf/distributions <<EOF
+          Origin: ${{ env.PKG }}
+          Label: ${{ env.PKG }}
+          Suite: ${{ env.DIST }}
+          Codename: ${{ env.DIST }}
+          Components: main
+          Architectures: amd64 source
+          EOF
           fi
 
-          echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
-          echo "use-agent" >> ~/.gnupg/gpg.conf
-          chmod 600 ~/.gnupg/gpg-agent.conf ~/.gnupg/gpg.conf
-          gpgconf --kill gpg-agent || true
+          reprepro -b ${{ env.REPO_DIR }} remove \
+            ${{ env.DIST }} ${{ env.PKG }} ${{ needs.release.outputs.version }} || true
+          reprepro -b ${{ env.REPO_DIR }} includedsc \
+            ${{ env.DIST }} ${{ env.BUILD_DIR }}/${{ env.PKG }}_${{ needs.release.outputs.version }}.dsc
+          reprepro -b ${{ env.REPO_DIR }} includedeb \
+            ${{ env.DIST }} ${{ env.BUILD_DIR }}/${{ env.PKG }}_${{ needs.release.outputs.version }}_${{ env.ARCH }}.deb
 
-          KEY_ID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec/ {print $5; exit}')
-          echo "Imported GPG key: $KEY_ID"
-          gpg --list-keys
-
-      - name: Build DEB package
-        env:
-          BUILD_DIR: ${{ env.BUILD_DIR }}
+      - name: Sign Release / InRelease && copy private key
         run: |
-          chmod +x ./build-deb.sh
-          ./build-deb.sh "${{ needs.release.outputs.version }}" "${{ env.BUILD_DIR }}"
+          echo "Copy public key"
+          cp public.key ${{ env.REPO_DIR }}
 
-      - name: Prepare repo dir and copy deb
-        run: |
-          set -eu
-          rm -rf $REPO_DIR
-          mkdir -p $REPO_DIR
-          cp ${{ env.BUILD_DIR }}/inotibatch_${{ needs.release.outputs.version }}_all.deb $REPO_DIR/
-
-      - name: Create Packages.gz and Release files
-        run: |
-          set -eu
-          cd $REPO_DIR
-          cat > override <<EOF
-          inotibatch  optional utils
-          EOF
-          dpkg-scanpackages . override > Packages
-          gzip -9 -c Packages > Packages.gz
+          echo "Generate and sign release files"
+          cd ${{ env.REPO_DIR }}
           apt-ftparchive release . > Release
-          rm -f override
-
-      - name: Sign Release and create InRelease (clearsigned)
-        run: |
-          set -eu
-          cd $REPO_DIR
-
-          # Write passphrase securely to temporary file
-          PASSPHRASE_FILE=$(mktemp)
-          printf '%s' '${{ secrets.GPG_PASSPHRASE }}' > "$PASSPHRASE_FILE"
-          chmod 600 "$PASSPHRASE_FILE"
-          cat "$PASSPHRASE_FILE"
-
-          # sign Release -> Release.gpg (detached)
-          gpg --batch --pinentry-mode loopback \
-              --passphrase-file "$PASSPHRASE_FILE" \
-              -abs -o Release.gpg Release
-
-          # create clearsigned InRelease
-          gpg --batch --pinentry-mode loopback \
-              --passphrase-file "$PASSPHRASE_FILE" \
-              --clearsign -o InRelease Release
-
-          # copy public key so consumers can download it
-          cp ../public.key .
-
-          # Delete temporary file securely
-          shred -u "$PASSPHRASE_FILE"
+          gpg --batch --yes --pinentry-mode loopback -abs -o Release.gpg Release
+          gpg --batch --yes --pinentry-mode loopback --clearsign -o InRelease Release
 
       - name: Publish apt repo to gh-pages
         if: needs.release.outputs.local_run == 'false'
@@ -154,16 +189,18 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./${{ env.REPO_DIR }}
           publish_branch: ${{ env.GH_PAGES_BRANCH }}
-          
+
       - name: Upload DEB to Github Release
         if: needs.release.outputs.local_run == 'false'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.release.outputs.tag_name }}
-          files: ${{ env.REPO_DIR }}/inotibatch_${{ needs.release.outputs.version }}_all.deb
+          files: ${{ env.REPO_DIR }}/${{ env.PKG }}_${{ needs.release.outputs.version }}_${{ env.ARCH }}.deb
 
       - name: Add job summary
         run: |
+          set -eu
+
           {
             echo "## 📦 Build & Publish Summary"
             echo ""

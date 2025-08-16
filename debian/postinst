@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+
+sed -i "s|/path/to/inotibatch.sh|/opt/inotibatch/bin/inotibatch.sh|g" /opt/inotibatch/systemd/inotibatch@.service
+
+case "$1" in
+  configure)
+    # systemd unit registrieren
+    deb-systemd-helper enable inotibatch@.service >/dev/null
+    deb-systemd-helper start inotibatch@.service >/dev/null || true
+
+    for inst in /etc/systemd/system/*/*.wants/inotibatch@*.service; do
+        # $inst is e.g. /etc/systemd/system/multi-user.target.wants/inotibatch@foo.service
+        unit=$(basename "$inst")
+        if deb-systemd-helper was-enabled "$unit"; then
+            echo "ℹ️ Restarting previously active service $unit"
+            deb-systemd-helper enable "$unit"
+            deb-systemd-helper star
+        fi
+    done
+
+    echo "✅ Inotibatch installed/updated."
+    ;;
+esac
+
+#DEBHELPER#
+exit 0

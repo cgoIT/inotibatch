@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+export DH_VERBOSE=1
+
+%:
+	dh $@
+
+override_dh_uscan:
+	@if [ -f .gitignore ]; then \
+	  grep -v '^#' .gitignore | sed '/^$/d' > debian/source/exclude; \
+	fi
+
+	@dh_uscan
+
+override_dh_installman:
+	@build-scripts/build-manpages.sh
+	@dh_installman debian/tmp/usr/share/man/man1/*
