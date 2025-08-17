@@ -9,13 +9,18 @@ else
   CONFIG_DIR="${CONFIG_DIR:-$SCRIPT_DIR/config}"
 fi
 
-SYSTEMD_DIR="/etc/systemd/system"
-
+SYSTEMD_DIRS=("/etc/systemd/system" "/lib/systemd/system")
 SERVICE_NAME_PREFIX="inotibatch@"
-SERVICE_TEMPLATE_FILE="${SYSTEMD_DIR}/${SERVICE_NAME_PREFIX}.service"
+SERVICE_TEMPLATE_FILE=
 
-if [[ ! -f "$SERVICE_TEMPLATE_FILE" ]]; then
-  echo "❌ Service-Template nicht gefunden: $SERVICE_TEMPLATE_FILE"
+for dir in "${SYSTEMD_DIRS[@]}"; do
+  if [[ -f "${dir}/${SERVICE_NAME_PREFIX}.service" ]]; then
+    SERVICE_TEMPLATE_FILE="${dir}/${SERVICE_NAME_PREFIX}.service"
+  fi
+done
+
+if [[ -z "${SERVICE_TEMPLATE_FILE}" ]]; then
+  echo "❌ Service-Template not found in: ${SYSTEMD_DIRS[@]}"
   exit 1
 fi
 
