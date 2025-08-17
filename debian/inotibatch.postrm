@@ -1,0 +1,23 @@
+#!/bin/sh
+# -------- debian/inotibatch.postrm --------
+set -e
+
+case "$1" in
+  purge)
+    # final cleanup: disable and remove all instance units
+    for unit in /etc/systemd/system/*/*.wants/inotibatch@*.service; do
+      unit=$(basename "$unit")
+      deb-systemd-helper disable "$unit" >/dev/null || true
+      deb-systemd-helper remove  "$unit" >/dev/null || true
+    done
+
+    # remove the template unit itself
+    deb-systemd-helper remove inotibatch@.service >/dev/null || true
+
+    # reload to forget removed units
+    systemctl daemon-reload
+    ;;
+esac
+
+#DEBHELPER#
+exit 0

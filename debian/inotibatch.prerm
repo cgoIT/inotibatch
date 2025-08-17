@@ -1,0 +1,26 @@
+#!/bin/sh
+# -------- debian/inotibatch.prerm --------
+set -e
+
+case "$1" in
+  remove|upgrade)
+    # reload in case the unit template changed on disk
+    systemctl daemon-reload
+
+    # stop all existing instances
+    for unit in /etc/systemd/system/*/*.wants/inotibatch@*.service; do
+      unit=$(basename "$unit")
+      deb-systemd-helper stop "$unit" >/dev/null || true
+    done
+    ;;
+  deconfigure)
+    # When completely removing (purge): also deactivate
+    for unit in /etc/systemd/system/*/*.wants/inotibatch@*.service; do
+      unit=$(basename "$unit")
+      deb-systemd-helper disable "$unit" >/dev/null || true
+    done
+    ;;
+esac
+
+#DEBHELPER#
+exit 0

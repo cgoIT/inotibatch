@@ -1,0 +1,27 @@
+#!/bin/sh
+# -------- debian/inotibatch.postinst --------
+set -e
+
+case "$1" in
+  configure)
+    # reload unit definitions in case the template changed
+    systemctl daemon-reload
+
+    # register the template unit so that instances are known to systemd
+    deb-systemd-helper enable inotibatch@.service >/dev/null
+
+    # restart all previously enabled instances
+    for unit in /etc/systemd/system/*/*.wants/inotibatch@*.service; do
+      unit=$(basename "$unit")
+      if deb-systemd-helper was-enabled "$unit"; then
+        deb-systemd-helper start "$unit" >/dev/null || true
+        echo "ℹ️ Restarted previously active service $unit"
+      fi
+    done
+
+    echo "✅ Inotibatch installed/updated."
+    ;;
+esac
+
+#DEBHELPER#
+exit 0
