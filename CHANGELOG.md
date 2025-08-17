@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.7](https://github.com/cgoIT/inotibatch/compare/v1.3.6...v1.3.7) (2025-08-17)
+
+
+### Bug Fixes
+
+* check multiple possible directories for service template file ([dc94876](https://github.com/cgoIT/inotibatch/commit/dc9487680f804d34f9a995e9fc4be766cfb457b6))
+
 ## [1.3.6](https://github.com/cgoIT/inotibatch/compare/v1.3.5...v1.3.6) (2025-08-17)
 
 
