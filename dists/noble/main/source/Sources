@@ -2,7 +2,7 @@ Package: inotibatch
 Format: 3.0 (native)
 Binary: inotibatch
 Architecture: all
-Version: 1.3.7
+Version: 1.3.8
 Maintainer: cgoIT <info@cgo-it.de>
 Standards-Version: 4.5.0
 Build-Depends: debhelper (>= 13)
@@ -11,15 +11,15 @@ Directory: pool/main/i/inotibatch
 Package-List:
  inotibatch deb utils optional arch=all
 Files:
- 0325c53dfa2cacf01b1e8cfd83728e5d 558 inotibatch_1.3.7.dsc
- 7d5b8b6833626cf9daaa5a974d2457f4 18984 inotibatch_1.3.7.tar.xz
+ 49b1ac6d93eb5318159f420e14e7d5a3 558 inotibatch_1.3.8.dsc
+ bef6db714e97f9ebdd69b3248ff2e1d2 19188 inotibatch_1.3.8.tar.xz
 Checksums-Sha1:
- 17209bc41c90e040f282698d3bc54f284873a461 558 inotibatch_1.3.7.dsc
- 030371fd5b617e5c2ccc3de8e44458e1a0c0d791 18984 inotibatch_1.3.7.tar.xz
+ 7b3479ca24cdba1399342ec26e57bf8ccdd6b3f3 558 inotibatch_1.3.8.dsc
+ 2263469866220ab25051b0d4a86c9455bb504162 19188 inotibatch_1.3.8.tar.xz
 Checksums-Sha256:
- 08cd76eb7eda020e63e4ae813ea4cb74ff787befe548b34537bb2cf6ceca761f 558 inotibatch_1.3.7.dsc
- 2ae2ab63e102321db130840295a04d282e8397ce68eeb11cc5e9c22b2bbb3aad 18984 inotibatch_1.3.7.tar.xz
+ dd2e79f0880bfbc10b29a4f5d3fd6a3c94eff623752426508ad9308fc73f3ff1 558 inotibatch_1.3.8.dsc
+ 27a7d96abd746d17c51b76c8e7cb26fb9555f469ef5552c26db66612c07b5f60 19188 inotibatch_1.3.8.tar.xz
 Checksums-Sha512:
- 90250817cf620d912310c7db451da5710f3f726b894d68cc524324d7b02b6b45b4e319507a7dbd3b46ed5750c4cedb6705c32f2eba01a62f007ac3b25fe834d9 558 inotibatch_1.3.7.dsc
- de23d6b7dd44c0e52df2ed420fbcd5ec44d577ca0e2f8d9ae5bd767e8d14b1ef2d8578b55f4ece2a68584868b823f087007330e21c70803f49d67d60706fdcd3 18984 inotibatch_1.3.7.tar.xz
+ 0adb5e52328399b870c82a93b69753a3d5137347c616716ea96f562bb8c1fef22457338eb9e55ca899521ff764acfedbb141ae0e13cd15560f37a3915dbe24b3 558 inotibatch_1.3.8.dsc
+ 72437b281bfcbd49798625cfea8308e3249816e2ee713e43531780702533fd58e3b5ddfeb7daede651e9d85fbdd8728e26c75575026021fc86abd1ec4de440fb 19188 inotibatch_1.3.8.tar.xz
 
