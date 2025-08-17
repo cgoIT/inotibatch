@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.6](https://github.com/cgoIT/inotibatch/compare/v1.3.5...v1.3.6) (2025-08-17)
+
+
+### Bug Fixes
+
+* remove duplicate directories from deb ([86da5fe](https://github.com/cgoIT/inotibatch/commit/86da5fe140722ff351f34648706ce1b04584f7e9))
+
 ## [1.3.5](https://github.com/cgoIT/inotibatch/compare/v1.3.4...v1.3.5) (2025-08-16)
 
 
