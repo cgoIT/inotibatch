@@ -1,6 +1,6 @@
 status.sh usr/share/inotibatch/
-bin/ usr/share/inotibatch/bin/
-actions/ usr/share/inotibatch/actions/
-hooks/ usr/share/inotibatch/hooks/
-tools/ usr/share/inotibatch/tools/
+bin/ usr/share/inotibatch/
+actions/ usr/share/inotibatch/
+hooks/ usr/share/inotibatch/
+tools/ usr/share/inotibatch/
 config/*.example etc/inotibatch/
