@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.8](https://github.com/cgoIT/inotibatch/compare/v1.3.7...v1.3.8) (2025-08-17)
+
+
+### Bug Fixes
+
+* fix postrm, postinst, prerm scripts ([4061f3c](https://github.com/cgoIT/inotibatch/commit/4061f3c0e7469bff8e96334e7ae198eb9a947157))
+
 ## [1.3.7](https://github.com/cgoIT/inotibatch/compare/v1.3.6...v1.3.7) (2025-08-17)
 
 
