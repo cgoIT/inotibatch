@@ -15,6 +15,7 @@ CONFIG_FILE="${CONFIG_DIR}/$1.conf"
 [[ -f "$CONFIG_FILE" ]] || { echo "Config $1.conf not found in $CONFIG_DIR!" >&2; exit 1; }
 
 set -a
+# shellcheck source=config/default.conf.example
 source "$CONFIG_FILE"
 set +a
 
@@ -26,6 +27,7 @@ export CONFIG_NAME CONFIG_PATH
 MUST_BE_DEFINED=(
   "PRE_HOOK_DIR"
   "POST_HOOK_DIR"
+  "TARGET_OWNER"
   "MAIL_ON_ERROR"
   "POST_HOOK_BATCH_SIZE"
   "POST_HOOK_IDLE_TIMEOUT"
@@ -36,7 +38,6 @@ MUST_BE_NON_EMPTY=(
   "SOURCE_DIR"
   "TARGET_DIR"
   "ACTION_SCRIPT"
-  "TARGET_OWNER"
 )
 
 MISSING=()
@@ -263,7 +264,7 @@ trap_error() {
 
 main() {
   log "Start inotibatch, instance: $1"
-  
+
   # Start background task in monitoring loop
   (
     while true; do
