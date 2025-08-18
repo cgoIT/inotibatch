@@ -22,6 +22,8 @@ custom hooks, logging, and systemd integration.
 
 # SEE ALSO
 
+inotibatch(2) — information about configuration variables
+
 inotibatch-status(1) — script to check the status of the configured jobs.
 
 inotibatch-create-services(1) — to create and start instances.

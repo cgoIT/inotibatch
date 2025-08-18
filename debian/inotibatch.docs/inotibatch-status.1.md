@@ -69,8 +69,8 @@ sudo inotibatch-status
 
 # SEE ALSO
 
-systemctl(1) — for manual service management.
-
 inotibatch(1) — the main script of iontibatch.
+
+inotibatch(2) — information about configuration variables
 
 inotibatch-create-services(1) — to create and start instances.

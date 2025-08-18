@@ -66,9 +66,9 @@ sudo inotibatch-create-services
 
 # SEE ALSO
 
-systemctl(1) — to manage systemd services manually.
-
 inotibatch(1) — the main inotibatch script.
+
+inotibatch(2) — information about configuration variables
 
 inotibatch-status(1) — script to check the status of the configured jobs.
 
