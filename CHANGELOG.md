@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.9](https://github.com/cgoIT/inotibatch/compare/v1.3.8...v1.3.9) (2025-08-23)
+
+
+### Bug Fixes
+
+* change comment in generated scripts ([4edfbb6](https://github.com/cgoIT/inotibatch/commit/4edfbb629ec81de0be0a976f18330277000d4bb3))
+* **docs:** add documentation about available env variables and functions for man pages ([913d772](https://github.com/cgoIT/inotibatch/commit/913d7726e49fcb10ec9670e27f151ed6d59f2d93))
+* make variable TARGET_OWNER optional ([c5d2675](https://github.com/cgoIT/inotibatch/commit/c5d2675c6a406f8d7a1eb38d53066c3018ab4883))
+
 ## [1.3.8](https://github.com/cgoIT/inotibatch/compare/v1.3.7...v1.3.8) (2025-08-17)
 
 
