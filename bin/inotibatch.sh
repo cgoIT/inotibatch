@@ -210,6 +210,10 @@ watch_batch_timeout() {
       fi
     } 200<"$BATCH_FILE.lock"
 
+    if [[ "$DEBUG" == "true" ]]; then
+      log "DEBUG: queued=$queued, now=$now, last_flush=$last_flush, age=$(( now - last_flush )), batch_size=$batch_size, idle_timeout=$idle_timeout"
+    fi
+
     if (( queued >= batch_size )) || { (( now - last_flush >= idle_timeout )) && (( queued > 0 )); }; then
       log "flush batched files for post processing. queued files=$queued, last_run=$last_flush"
 
