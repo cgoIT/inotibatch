@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.16](https://github.com/cgoIT/inotibatch/compare/v1.3.15...v1.3.16) (2025-08-23)
+
+
+### Bug Fixes
+
+* correctly count batched files ([7d47741](https://github.com/cgoIT/inotibatch/commit/7d4774149fa26fe2954b9a2268269eafa0f1a465))
+
 ## [1.3.15](https://github.com/cgoIT/inotibatch/compare/v1.3.14...v1.3.15) (2025-08-23)
 
 
