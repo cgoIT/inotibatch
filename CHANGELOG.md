@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.11](https://github.com/cgoIT/inotibatch/compare/v1.3.10...v1.3.11) (2025-08-23)
+
+
+### Bug Fixes
+
+* only run hooks if directory is set and not empty ([7d8a7cd](https://github.com/cgoIT/inotibatch/commit/7d8a7cdf9371a63c3ffb0095a914097781da0c62))
+
 ## [1.3.10](https://github.com/cgoIT/inotibatch/compare/v1.3.9...v1.3.10) (2025-08-23)
 
 
