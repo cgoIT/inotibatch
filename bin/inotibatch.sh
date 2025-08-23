@@ -130,8 +130,6 @@ run_hooks() {
       log "Running hook: $script"
       LOG_PREFIX="$(basename "$script")" "$script" "$CONFIG_NAME" "$@" >>"$PROCESS_LOG" 2>&1
     done
-  else
-    log "Skip hook because hook directory not set"
   fi
 }
 
