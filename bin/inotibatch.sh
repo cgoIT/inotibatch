@@ -199,10 +199,17 @@ flush_batch() {
 }
 
 watch_batch_timeout() {
+  local batch_size
+  local idle_timeout
+
+  batch_size="${1}"
+  idle_timeout="${2}"
+
   while true; do
     sleep 5
 
-    local now=$(date +%s)
+    local now
+    now=$(date +%s)
     local last_mod=0
     local queued=0
 
@@ -214,7 +221,7 @@ watch_batch_timeout() {
       fi
     ) 200<"$BATCH_FILE.lock"
 
-    if (( queued >= POST_HOOK_BATCH_SIZE )) || (( now - last_mod >= POST_HOOK_IDLE_TIMEOUT )); then
+    if (( queued >= batch_size )) || (( now - last_mod >= idle_timeout )); then
       log "flush batched files for post processing. queued files=$queued, last_run=$last_mod"
       flush_batch || log "flush_batch failed in watch_batch_timeout" >&2
     fi
@@ -275,7 +282,7 @@ main() {
   # Start background task in monitoring loop
   (
     while true; do
-      watch_batch_timeout
+      watch_batch_timeout "${POST_HOOK_BATCH_SIZE}" "${POST_HOOK_IDLE_TIMEOUT}"
       log "watch_batch_timeout has ended — Restart"
       sleep 1  # Wait briefly to avoid starting an endless loop too quickly.
     done
