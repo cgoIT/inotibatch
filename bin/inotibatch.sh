@@ -194,6 +194,7 @@ flush_batch() {
       exit 1
     fi
 
+    LAST_FLUSH=$(date +%s)
     rm -f "$TMP_BATCH"
   ) 200>"$BATCH_FILE.lock"
 }
@@ -204,6 +205,8 @@ watch_batch_timeout() {
 
   batch_size="${1}"
   idle_timeout="${2}"
+
+  LAST_FLUSH=$(date +%s)
 
   while true; do
     sleep 5
@@ -221,7 +224,7 @@ watch_batch_timeout() {
       fi
     ) 200<"$BATCH_FILE.lock"
 
-    if (( queued >= batch_size )) || (( now - last_mod >= idle_timeout )); then
+    if (( queued >= batch_size )) || { (( now - LAST_FLUSH >= idle_timeout )) && (( queued > 0 )); }; then
       log "flush batched files for post processing. queued files=$queued, last_run=$last_mod"
       flush_batch || log "flush_batch failed in watch_batch_timeout" >&2
     fi
