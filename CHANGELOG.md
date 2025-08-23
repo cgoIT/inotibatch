@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.14](https://github.com/cgoIT/inotibatch/compare/v1.3.13...v1.3.14) (2025-08-23)
+
+
+### Bug Fixes
+
+* ensure that batch size and idle timeout are present in background post processing ([3f78807](https://github.com/cgoIT/inotibatch/commit/3f78807c117ce80aa625ab5eb4d1aaa4fe5a456a))
+
 ## [1.3.13](https://github.com/cgoIT/inotibatch/compare/v1.3.12...v1.3.13) (2025-08-23)
 
 
