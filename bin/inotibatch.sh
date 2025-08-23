@@ -216,13 +216,12 @@ watch_batch_timeout() {
     local last_mod=0
     local queued=0
 
-    (
+    {
       flock -s 200 || { log "Failed to acquire shared lock in watch_batch_timeout" >&2; continue; }
       if [[ -f "$BATCH_FILE" ]]; then
-        last_mod=$(stat -c %Y "$BATCH_FILE" 2>/dev/null || echo 0)
-        queued=$(wc -l < "$BATCH_FILE" 2>/dev/null || echo 0)
+        queued=$(grep -c '' "$BATCH_FILE" 2>/dev/null || echo 0)
       fi
-    ) 200<"$BATCH_FILE.lock"
+    } 200<"$BATCH_FILE.lock"
 
     if (( queued >= batch_size )) || { (( now - LAST_FLUSH >= idle_timeout )) && (( queued > 0 )); }; then
       log "flush batched files for post processing. queued files=$queued, last_run=$last_mod"
