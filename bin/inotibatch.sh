@@ -231,11 +231,18 @@ process_file() {
 
   log "Processing: event=$event, src=$src, dest=$dest"
 
-  run_hooks "$PRE_HOOK_DIR" "$src" "$dest"
+  if [[ -n "${PRE_HOOK_DIR}" ]]; then
+    run_hooks "$PRE_HOOK_DIR" "$src" "$dest"
+  fi
+
   run_action_script "$src" "$dest"
 
-  queue_file_for_batch "$dest"
-  log "Processed file and stored for post-hook: src=$src, dest=$dest"
+  if [[ -n "${POST_HOOK_DIR}" ]]; then
+    queue_file_for_batch "$dest"
+    log "Processed file and stored for post-hook: src=$src, dest=$dest"
+  else
+    log "Processed file: src=$src, dest=$dest"
+  fi
 }
 
 inotifywait_loop() {
