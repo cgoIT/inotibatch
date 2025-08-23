@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.15](https://github.com/cgoIT/inotibatch/compare/v1.3.14...v1.3.15) (2025-08-23)
+
+
+### Bug Fixes
+
+* correctly count batched files ([54c5e89](https://github.com/cgoIT/inotibatch/commit/54c5e8950a22563021fac81d4e780af598cbdfdf))
+* remember the last flush time in the script and don't get it from the timestamp of the batch file ([39c12b6](https://github.com/cgoIT/inotibatch/commit/39c12b65780bccd089bfd010de26c754ed945426))
+
 ## [1.3.14](https://github.com/cgoIT/inotibatch/compare/v1.3.13...v1.3.14) (2025-08-23)
 
 
