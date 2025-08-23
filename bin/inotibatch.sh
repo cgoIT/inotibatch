@@ -219,7 +219,7 @@ watch_batch_timeout() {
     {
       flock -s 200 || { log "Failed to acquire shared lock in watch_batch_timeout" >&2; continue; }
       if [[ -f "$BATCH_FILE" ]]; then
-        queued=$(grep -c '' "$BATCH_FILE" 2>/dev/null || echo 0)
+        queued=$(grep -c '' "$BATCH_FILE" 2>/dev/null)
       fi
     } 200<"$BATCH_FILE.lock"
 
