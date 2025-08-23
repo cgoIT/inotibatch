@@ -27,7 +27,12 @@ TEMPLATE_HEADER='#!/bin/bash
 #
 #  MAIL_ON_ERROR          Email address to notify in case of processing errors
 #
-# These variables are available to all action and hook scripts and can be used directly.
+# Available functions:
+#
+# log                        Logs a given statement to the correct logfile(s). Adds a correct
+#                            timestamp to each log entry.
+#
+# These variables and functions are available to all action and hook scripts and can be used directly.
 '
 
 # Parameter prüfen
