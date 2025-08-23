@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.10](https://github.com/cgoIT/inotibatch/compare/v1.3.9...v1.3.10) (2025-08-23)
+
+
+### Bug Fixes
+
+* update template scripts ([fcd479e](https://github.com/cgoIT/inotibatch/commit/fcd479e754b5fcf88920bb92f0e822c4f31cc7f4))
+
 ## [1.3.9](https://github.com/cgoIT/inotibatch/compare/v1.3.8...v1.3.9) (2025-08-23)
 
 
