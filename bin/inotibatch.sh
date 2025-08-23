@@ -215,6 +215,7 @@ watch_batch_timeout() {
     ) 200<"$BATCH_FILE.lock"
 
     if (( queued >= POST_HOOK_BATCH_SIZE )) || (( now - last_mod >= POST_HOOK_IDLE_TIMEOUT )); then
+      log "flush batched files for post processing. queued files=$queued, last_run=$last_mod"
       flush_batch || log "flush_batch failed in watch_batch_timeout" >&2
     fi
   done
