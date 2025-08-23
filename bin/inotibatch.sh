@@ -122,12 +122,17 @@ run_action_script() {
 run_hooks() {
   local hook_dir="$1"
   shift
-  for script in "$hook_dir"/*; do
-    [[ -x "$script" ]] || continue
-    LOG_PREFIX="$(basename "$hook_dir")"
-    log "Running hook: $script"
-    LOG_PREFIX="$(basename "$hook_dir")" "$script" "$CONFIG_NAME" "$@" >>"$PROCESS_LOG" 2>&1
-  done
+
+  if [[ -n "${hook_dir}" ]]; then
+    for script in "$hook_dir"/*; do
+      [[ -x "$script" ]] || continue
+      LOG_PREFIX="$(basename "$hook_dir")"
+      log "Running hook: $script"
+      LOG_PREFIX="$(basename "$script")" "$script" "$CONFIG_NAME" "$@" >>"$PROCESS_LOG" 2>&1
+    done
+  else
+    log "Skip hook because hook directory not set"
+  fi
 }
 
 queue_file_for_batch() {
@@ -231,18 +236,12 @@ process_file() {
 
   log "Processing: event=$event, src=$src, dest=$dest"
 
-  if [[ -n "${PRE_HOOK_DIR}" ]]; then
-    run_hooks "$PRE_HOOK_DIR" "$src" "$dest"
-  fi
+  run_hooks "$PRE_HOOK_DIR" "$src" "$dest"
 
   run_action_script "$src" "$dest"
 
-  if [[ -n "${POST_HOOK_DIR}" ]]; then
-    queue_file_for_batch "$dest"
-    log "Processed file and stored for post-hook: src=$src, dest=$dest"
-  else
-    log "Processed file: src=$src, dest=$dest"
-  fi
+  queue_file_for_batch "$dest"
+  log "Processed file and stored for post-hook: src=$src, dest=$dest"
 }
 
 inotifywait_loop() {
