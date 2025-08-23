@@ -31,8 +31,8 @@
 #
 # These variables and functions are available to all action and hook scripts and can be used directly.
 
-conf="$1"
+instance="$1"
 src="$2"
 dest="$3"
 
-log "Post-Hook file: instance=$conf; src=$src; dest=$dest"
+log "Post-Hook file: instance=$instance; src=$src; dest=$dest"

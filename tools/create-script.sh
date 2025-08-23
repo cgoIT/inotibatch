@@ -33,6 +33,11 @@ TEMPLATE_HEADER='#!/bin/bash
 #                            timestamp to each log entry.
 #
 # These variables and functions are available to all action and hook scripts and can be used directly.
+
+instance="$1"
+src="$2"
+dest="$3"
+
 '
 
 # Parameter prüfen
