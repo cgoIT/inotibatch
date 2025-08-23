@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.13](https://github.com/cgoIT/inotibatch/compare/v1.3.12...v1.3.13) (2025-08-23)
+
+
+### Bug Fixes
+
+* add more logging ([2f254e0](https://github.com/cgoIT/inotibatch/commit/2f254e0fc38072e461192e94f39b91b757f058b5))
+
 ## [1.3.12](https://github.com/cgoIT/inotibatch/compare/v1.3.11...v1.3.12) (2025-08-23)
 
 
