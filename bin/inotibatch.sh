@@ -149,29 +149,23 @@ flush_batch() {
   (
     flock -x 200 || { log "Failed to acquire lock in flush_batch" >&2; exit 1; }
 
-    # Check if batch file is empty
     if [[ ! -s "$BATCH_FILE" ]]; then
       return 0
     fi
 
     TMP_BATCH="${BATCH_FILE}.processing"
 
-    if ! mv "$BATCH_FILE" "$TMP_BATCH"; then
-      log "Failed to rename batch file" >&2
+    # Securing the content
+    if ! cp "$BATCH_FILE" "$TMP_BATCH"; then
+      log "Failed to copy batch file" >&2
       exit 1
     fi
 
-    # Create new empty batch file for further entries
-    if ! touch "$BATCH_FILE"; then
-      log "Failed to create new batch file" >&2
-      # Try renaming TMP_BATCH so you don't lose anything.
-      mv "$TMP_BATCH" "$BATCH_FILE" || log "Critical: Could not restore batch file!" >&2
-      exit 1
-    fi
+    # Empty batch file (inode remains intact)
+    : > "$BATCH_FILE"
 
     if ! mapfile -t files < "$TMP_BATCH"; then
       log "Failed to read files from temporary batch file" >&2
-      # Try to delete temporary file, but do not exit, as it may be recoverable.
       rm -f "$TMP_BATCH"
       exit 1
     fi
@@ -184,11 +178,9 @@ flush_batch() {
         echo "$(date +'%F %T') $f" >> "${PROCESSED_FILE}"
       done
     else
-      echo "Post-hook execution failed" >&2
       for f in "${files[@]}"; do
         echo "$(date +'%F %T') $f" >> "${ERRORED_FILE}"
       done
-
       log "Post-hook execution failed" >&2
       rm -f "$TMP_BATCH"
       exit 1
@@ -199,21 +191,17 @@ flush_batch() {
 }
 
 watch_batch_timeout() {
-  local batch_size
-  local idle_timeout
+  local batch_size idle_timeout last_flush now queued
 
   batch_size="${1}"
   idle_timeout="${2}"
-
-  LAST_FLUSH=$(date +%s)
+  last_flush=$(date +%s)
 
   while true; do
     sleep 5
 
-    local now
     now=$(date +%s)
-    local last_mod=0
-    local queued=0
+    queued=0
 
     {
       flock -s 200 || { log "Failed to acquire shared lock in watch_batch_timeout" >&2; continue; }
@@ -222,10 +210,10 @@ watch_batch_timeout() {
       fi
     } 200<"$BATCH_FILE.lock"
 
-    if (( queued >= batch_size )) || { (( now - LAST_FLUSH >= idle_timeout )) && (( queued > 0 )); }; then
-      log "flush batched files for post processing. queued files=$queued, last_run=$LAST_FLUSH"
+    if (( queued >= batch_size )) || { (( now - last_flush >= idle_timeout )) && (( queued > 0 )); }; then
+      log "flush batched files for post processing. queued files=$queued, last_run=$last_flush"
 
-      LAST_FLUSH=$(date +%s)
+      last_flush=$(date +%s)
       flush_batch || log "flush_batch failed in watch_batch_timeout" >&2
     fi
   done
