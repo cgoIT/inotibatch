@@ -121,7 +121,6 @@ sanitize_filename() {
                  | sed 's/--*/-/g'
   )
 
-  log "DEBUG" "Sanitized filename $name --> $sanitize_filename"
   echo "$sanitize_filename"
 }
 
@@ -132,7 +131,6 @@ should_skip_file() {
   for pattern in "${EXCLUDE_PATTERNS[@]}"; do
       # shellcheck disable=SC2053
       if [[ $filename == $pattern ]]; then
-          log "DEBUG" "Skipping file $filename due to pattern $pattern"
           return 0  # match found -> skip
       fi
   done
@@ -169,10 +167,13 @@ run_hooks() {
 }
 
 queue_file_for_batch() {
+  local file
+  file="$1"
+
   {
     flock -x 200 || { log "ERROR" "Failed to acquire lock in queue_file_for_batch" >&2; return 1; }
-    log "DEBUG" "Queueing file for batch: $1"
-    if ! echo "$1" >> "$BATCH_FILE"; then
+    log "DEBUG" "Queueing file $file for batch"
+    if ! echo "$file" >> "$BATCH_FILE"; then
       log "ERROR" "Failed to write to batch file" >&2
       return 1
     fi
@@ -247,12 +248,14 @@ watch_batch_timeout() {
       flock -s 200 || { log "ERROR" "Failed to acquire shared lock in watch_batch_timeout" >&2; continue; }
       if [[ -f "$BATCH_FILE" ]]; then
         queued=$(grep -c '' "$BATCH_FILE" 2>/dev/null)
+      else
+        log "DEBUG" "Batch file $BATCH_FILE not found"
       fi
     } 200<"$BATCH_LOCK"
 
     log "DEBUG" "queued=$queued, now=$now, last_flush=$last_flush, age=$(( now - last_flush )), batch_size=$batch_size, idle_timeout=$idle_timeout"
 
-    if (( queued >= batch_size )) || { (( now - last_flush >= idle_timeout )) && (( queued > 0 )); }; then
+    if (( queued >= batch_size )) || (( now - last_flush >= idle_timeout )); then
       log "INFO" "Flush batched files for post processing. queued=$queued, last_run=$last_flush"
       last_flush=$(date +%s)
       flush_batch || log "ERROR" "flush_batch failed in watch_batch_timeout" >&2
