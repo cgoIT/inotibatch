@@ -80,12 +80,29 @@ touch "$BATCH_FILE"
 touch "$BATCH_FILE.lock"
 
 log() {
-  local timestamp
+  local level msg timestamp
   timestamp="$(date +'%F %T')"
+
+  case "${1:-}" in
+    INFO|DEBUG|WARN|ERROR)
+      level="$1"
+      shift
+      ;;
+    *)
+      level="INFO"
+      ;;
+  esac
+  msg="$*"
+
+  # Debug logs only when DEBUG is enabled
+  if [[ "$level" == "DEBUG" && "${DEBUG:-false}" != "true" ]]; then
+    return 0
+  fi
+
   if [[ -n "${LOG_PREFIX:-}" ]]; then
-    echo "[$timestamp] [$LOG_PREFIX] $*"
+    echo "[$timestamp] [$level] [$LOG_PREFIX] $msg"
   else
-    echo "[$timestamp] $*"
+    echo "[$timestamp] [$level] $msg"
   fi
 }
 export -f log
@@ -127,25 +144,25 @@ run_hooks() {
     for script in "$hook_dir"/*; do
       [[ -x "$script" ]] || continue
       LOG_PREFIX="$(basename "$hook_dir")"
-      log "Running hook: $script"
+      log "INFO" "Running hook: $script"
       LOG_PREFIX="$(basename "$script")" "$script" "$CONFIG_NAME" "$@" >>"$PROCESS_LOG" 2>&1
     done
   fi
 }
 
 queue_file_for_batch() {
-  (
-    flock -x 200 || { log "Failed to acquire lock in queue_file_for_batch" >&2; exit 1; }
+  {
+    flock -x 200 || { log "ERROR" "Failed to acquire lock in queue_file_for_batch" >&2; return 1; }
     if ! echo "$1" >> "$BATCH_FILE"; then
-      log "Failed to write to batch file" >&2
-      exit 1
+      log "ERROR" "Failed to write to batch file" >&2
+      return 1
     fi
-  ) 200>"$BATCH_FILE.lock"
+  } 200>"$BATCH_FILE.lock"
 }
 
 flush_batch() {
-  (
-    flock -x 200 || { log "Failed to acquire lock in flush_batch" >&2; exit 1; }
+  {
+    flock -x 200 || { log "ERROR" "Failed to acquire lock in flush_batch" >&2; return 1; }
 
     if [[ ! -s "$BATCH_FILE" ]]; then
       return 0
@@ -155,21 +172,21 @@ flush_batch() {
 
     # Securing the content
     if ! cp "$BATCH_FILE" "$TMP_BATCH"; then
-      log "Failed to copy batch file" >&2
-      exit 1
+      log "ERROR" "Failed to copy batch file" >&2
+      return 1
     fi
 
     # Empty batch file (inode remains intact)
     : > "$BATCH_FILE"
 
     if ! mapfile -t files < "$TMP_BATCH"; then
-      log "Failed to read files from temporary batch file" >&2
+      log "ERROR" "Failed to read files from temporary batch file" >&2
       rm -f "$TMP_BATCH"
-      exit 1
+      return 1
     fi
 
     LOG_PREFIX="$POST_HOOK_DIR"
-    log "Post-Hook for ${#files[@]} files"
+    log "INFO" "Post-Hook for ${#files[@]} files"
 
     if run_hooks "$POST_HOOK_DIR" "${files[@]}"; then
       for f in "${files[@]}"; do
@@ -179,13 +196,13 @@ flush_batch() {
       for f in "${files[@]}"; do
         echo "$(date +'%F %T') $f" >> "${ERRORED_FILE}"
       done
-      log "Post-hook execution failed" >&2
+      log "ERROR" "Post-hook execution failed" >&2
       rm -f "$TMP_BATCH"
-      exit 1
+      return 1
     fi
 
     rm -f "$TMP_BATCH"
-  ) 200>"$BATCH_FILE.lock"
+  } 200>"$BATCH_FILE.lock"
 }
 
 watch_batch_timeout() {
@@ -202,21 +219,21 @@ watch_batch_timeout() {
     queued=0
 
     {
-      flock -s 200 || { log "Failed to acquire shared lock in watch_batch_timeout" >&2; continue; }
+      flock -s 200 || { log "ERROR" "Failed to acquire shared lock in watch_batch_timeout" >&2; continue; }
       if [[ -f "$BATCH_FILE" ]]; then
         queued=$(grep -c '' "$BATCH_FILE" 2>/dev/null)
       fi
     } 200<"$BATCH_FILE.lock"
 
     if [[ "$DEBUG" == "true" ]]; then
-      log "DEBUG: queued=$queued, now=$now, last_flush=$last_flush, age=$(( now - last_flush )), batch_size=$batch_size, idle_timeout=$idle_timeout"
+      log "DEBUG" "queued=$queued, now=$now, last_flush=$last_flush, age=$(( now - last_flush )), batch_size=$batch_size, idle_timeout=$idle_timeout"
     fi
 
     if (( queued >= batch_size )) || { (( now - last_flush >= idle_timeout )) && (( queued > 0 )); }; then
-      log "flush batched files for post processing. queued files=$queued, last_run=$last_flush"
+      log "INFO" "flush batched files for post processing. queued files=$queued, last_run=$last_flush"
 
       last_flush=$(date +%s)
-      flush_batch || log "flush_batch failed in watch_batch_timeout" >&2
+      flush_batch || log "ERROR" "flush_batch failed in watch_batch_timeout" >&2
     fi
   done
 }
@@ -235,14 +252,14 @@ process_file() {
 
   local dest="$(realpath -m "$TARGET_DIR/$dir_part/$target_base")"
 
-  log "Processing: event=$event, src=$src, dest=$dest"
+  log "INFO" "Processing: event=$event, src=$src, dest=$dest"
 
   run_hooks "$PRE_HOOK_DIR" "$src" "$dest"
 
   run_action_script "$src" "$dest"
 
   queue_file_for_batch "$dest"
-  log "Processed file and stored for post-hook: src=$src, dest=$dest"
+  log "INFO" "Processed file and stored for post-hook: src=$src, dest=$dest"
 }
 
 inotifywait_loop() {
@@ -263,20 +280,20 @@ inotifywait_loop() {
 
 trap_error() {
   local msg="$1"
-  log "ERROR: $msg"
+  log "ERROR" "$msg"
   if [[ -n "$EMAIL_ON_ERROR" ]]; then
     echo "$msg" | mail -s "File Sync Error in Instance $1" "$EMAIL_ON_ERROR"
   fi
 }
 
 main() {
-  log "Start inotibatch, instance: $1"
+  log "INFO" "Start inotibatch, instance: $1"
 
   # Start background task in monitoring loop
   (
     while true; do
       watch_batch_timeout "${POST_HOOK_BATCH_SIZE}" "${POST_HOOK_IDLE_TIMEOUT}"
-      log "watch_batch_timeout has ended — Restart"
+      log "ERROR" "watch_batch_timeout has ended — Restart"
       sleep 1  # Wait briefly to avoid starting an endless loop too quickly.
     done
   ) &
