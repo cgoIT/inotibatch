@@ -75,9 +75,12 @@ exec >>"$LOGFILE" 2>&1
 PROCESS_LOG="/var/log/inotibatch/${CONFIG_NAME}.process.log"
 touch "$PROCESS_LOG"
 
-BATCH_FILE="/tmp/inotibatch-$1.batch"
+SPOOL_DIR="/var/spool/inotibatch"
+mkdir -p "$SPOOL_DIR"
+BATCH_FILE="${SPOOL_DIR}/${CONFIG_NAME}.batch"
+BATCH_LOCK"${SPOOL_DIR}/${CONFIG_NAME}.lock"
 touch "$BATCH_FILE"
-touch "$BATCH_FILE.lock"
+touch "$BATCH_LOCK"
 
 log() {
   local level msg timestamp
@@ -123,6 +126,7 @@ should_skip_file() {
   filename="$1"
 
   for pattern in "${EXCLUDE_PATTERNS[@]}"; do
+      # shellcheck disable=SC2053
       if [[ $filename == $pattern ]]; then
           log "DEBUG" "Skipping file $filename due to pattern $pattern"
           return 0  # match found -> skip
@@ -168,7 +172,7 @@ queue_file_for_batch() {
       log "ERROR" "Failed to write to batch file" >&2
       return 1
     fi
-  } 200>"$BATCH_FILE.lock"
+  } 200>"$BATCH_LOCK"
 }
 
 flush_batch() {
@@ -188,14 +192,14 @@ flush_batch() {
       return 1
     fi
 
-    : > "$BATCH_FILE"
-    log "DEBUG" "Emptied batch file after copying"
-
     if ! mapfile -t files < "$TMP_BATCH"; then
       log "ERROR" "Failed to read files from temporary batch file" >&2
       rm -f "$TMP_BATCH"
       return 1
     fi
+
+    : > "$BATCH_FILE"
+    log "DEBUG" "Emptied batch file after copying"
 
     log "DEBUG" "Loaded ${#files[@]} files from $TMP_BATCH"
     LOG_PREFIX="$POST_HOOK_DIR"
@@ -218,7 +222,7 @@ flush_batch() {
 
     rm -f "$TMP_BATCH"
     log "DEBUG" "Removed temporary batch file $TMP_BATCH"
-  } 200>"$BATCH_FILE.lock"
+  } 200>"$BATCH_LOCK"
 }
 
 watch_batch_timeout() {
@@ -240,7 +244,7 @@ watch_batch_timeout() {
       if [[ -f "$BATCH_FILE" ]]; then
         queued=$(grep -c '' "$BATCH_FILE" 2>/dev/null)
       fi
-    } 200<"$BATCH_FILE.lock"
+    } 200<"$BATCH_LOCK"
 
     log "DEBUG" "queued=$queued, now=$now, last_flush=$last_flush, age=$(( now - last_flush )), batch_size=$batch_size, idle_timeout=$idle_timeout"
 
@@ -277,6 +281,7 @@ process_file() {
 
 inotifywait_loop() {
   local args skip
+  # shellcheck disable=SC2054
   args=(-m -e close_write,create,modify --format '%w%f|%e')
   [[ "$RECURSIVE" == "true" ]] && args+=(-r)
 
