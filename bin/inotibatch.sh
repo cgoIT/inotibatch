@@ -78,7 +78,7 @@ touch "$PROCESS_LOG"
 SPOOL_DIR="/var/spool/inotibatch"
 mkdir -p "$SPOOL_DIR"
 BATCH_FILE="${SPOOL_DIR}/${CONFIG_NAME}.batch"
-BATCH_LOCK"${SPOOL_DIR}/${CONFIG_NAME}.lock"
+BATCH_LOCK="${SPOOL_DIR}/${CONFIG_NAME}.lock"
 touch "$BATCH_FILE"
 touch "$BATCH_LOCK"
 
