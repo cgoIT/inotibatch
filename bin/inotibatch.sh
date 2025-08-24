@@ -111,14 +111,18 @@ log() {
 export -f log
 
 sanitize_filename() {
-  local name
+  local name sanitize_filename
   name="$1"
 
-  log "DEBUG" "Sanitizing filename: $name"
-  echo "$name" | tr '[:upper:]' '[:lower:]' \
-               | sed 's/ /_/g' \
-               | sed 's/[^a-z0-9._-]/-/g' \
-               | sed 's/--*/-/g'
+  sanitize_filename=$(
+    echo "$name" | tr '[:upper:]' '[:lower:]' \
+                 | sed 's/ /_/g' \
+                 | sed 's/[^a-z0-9._-]/-/g' \
+                 | sed 's/--*/-/g'
+  )
+
+  log "DEBUG" "Sanitized filename $name --> $sanitize_filename"
+  echo "$sanitize_filename"
 }
 
 should_skip_file() {
