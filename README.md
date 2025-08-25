@@ -111,6 +111,9 @@ POST_HOOK_IDLE_TIMEOUT=30
 
 # Notification settings
 MAIL_ON_ERROR=admin@example.com
+
+# Enable/Disable debug logging
+DEBUG=false
 ```
 
 ---
