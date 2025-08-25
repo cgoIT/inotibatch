@@ -237,9 +237,9 @@ flush_batch() {
   LOG_PREFIX="flush_batch" ilog "INFO" "Post-Hook for ${#files[@]} files"
 
   if run_hooks "$post_hook_dir" "${files[@]}"; then
-    for f in "${files[@]}"; do echo "$(date +'%F %T') $f" >> "$processed_file"; done
+    for f in "${files[@]}"; do printf "%s" "$(date +'%F %T') $f\n" >> "$processed_file"; done
   else
-    for f in "${files[@]}"; do echo "$(date +'%F %T') $f" >> "$errored_file"; done
+    for f in "${files[@]}"; do printf "%s" "$(date +'%F %T') $f\n" >> "$errored_file"; done
     LOG_PREFIX="flush_batch" ilog "ERROR" "Post-hook failed"
     rm -f "$tmp_batch"
     return 1
@@ -320,7 +320,12 @@ process_file() {
 
   run_hooks "$PRE_HOOK_DIR" "$src" "$dest"
   run_action_script "$src" "$dest"
-  queue_file_for_batch "$dest"
+  if [[ -n "$POST_HOOK_DIR" ]]; then
+    queue_file_for_batch "$dest"
+  else
+    LOG_PREFIX="process_file" ilog "DEBUG" "No POST_HOOK_DIR set. Not queuing file $dest for post processing."
+    printf "%s" "$(date +'%F %T') $dest" >> "$PROCESSED_FILE"
+  fi
 
   LOG_PREFIX="process_file" ilog "INFO" "File queued for post-hook: $dest"
 }
@@ -352,7 +357,7 @@ trap_error() {
 
   LOG_PREFIX="trap_error" ilog "ERROR" "$msg"
   if [[ -n "$EMAIL_ON_ERROR" ]]; then
-    echo "$msg" | mail -s "File Sync Error in Instance $CONFIG_NAME" "$EMAIL_ON_ERROR"
+    printf "%s" "$msg" | mail -s "File Sync Error in Instance $CONFIG_NAME" "$EMAIL_ON_ERROR"
   fi
 }
 
