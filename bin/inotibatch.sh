@@ -322,12 +322,11 @@ process_file() {
   run_action_script "$src" "$dest"
   if [[ -n "$POST_HOOK_DIR" ]]; then
     queue_file_for_batch "$dest"
+    LOG_PREFIX="process_file" ilog "INFO" "File queued for post-hook: $dest"
   else
-    LOG_PREFIX="process_file" ilog "DEBUG" "No POST_HOOK_DIR set. Not queuing file $dest for post processing."
     printf "%s" "$(date +'%F %T') $dest" >> "$PROCESSED_FILE"
+    LOG_PREFIX="process_file" ilog "DEBUG" "No POST_HOOK_DIR set. Not queuing file $dest for post processing."
   fi
-
-  LOG_PREFIX="process_file" ilog "INFO" "File queued for post-hook: $dest"
 }
 
 # ---- inotifywait loop ----
