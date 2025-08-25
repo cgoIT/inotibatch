@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1](https://github.com/cgoIT/inotibatch/compare/v1.4.0...v1.4.1) (2025-08-25)
+
+
+### Bug Fixes
+
+* only add files to post process batch file if POST_HOOK_DIR is set and not empty ([7990200](https://github.com/cgoIT/inotibatch/commit/7990200cdb9f983ec4c3c6db9f348f75ad82c6e7))
+* only add files to post process batch file if POST_HOOK_DIR is set and not empty ([e3d506a](https://github.com/cgoIT/inotibatch/commit/e3d506ad512b006ab4794280eb89e76ed688ddb5))
+
 ## [1.4.0](https://github.com/cgoIT/inotibatch/compare/v1.3.16...v1.4.0) (2025-08-25)
 
 
