@@ -1,17 +1,17 @@
 Package: inotibatch
 Architecture: all
-Version: 1.4.0
+Version: 1.4.1
 Priority: optional
 Section: utils
 Maintainer: cgoIT <info@cgo-it.de>
-Installed-Size: 73
+Installed-Size: 74
 Depends: inotify-tools, mailutils
-Filename: pool/main/i/inotibatch/inotibatch_1.4.0_all.deb
-Size: 15700
-MD5sum: d6be21ba5595150444a4771364d9815b
-SHA1: c56f4753a7ee449eed33a4c743658105b926e65e
-SHA256: 10d2c22f21ef1c8dfc20e8f125517ed515ea00e60918eb160f35faf5918bd071
-SHA512: 9f4bdda9186d122852501864d5fb35f5ba4e3c73506d74567f5a1f1ab4381d6fc586d0641496e058743a44dda72a9ff059978e5b7c04f27ac6c88f9814c75527
+Filename: pool/main/i/inotibatch/inotibatch_1.4.1_all.deb
+Size: 15778
+MD5sum: 46f81c1f56d85e0834a268a755356643
+SHA1: 6961ffa81531f236df595da92073862142f3a2c4
+SHA256: ebe4d2ad244e060466ceb914a6ca513569eb0351ab298e7bee93f804fb2b56c2
+SHA512: d411859e854c55bfeb0968ba6ddfadeb5b5d707a2aef830dec784faa9c7c15bc0277bbaedfa32426c20b7b786f60fa05c3fdd6c84d68bf786abc78870f327196
 Homepage: https://github.com/cgoIT/inotibatch
 Description: Configurable file-based sync and hook system using inotify
  A flexible bash-based file synchronization tool using inotifywait,
