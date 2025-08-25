@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.3](https://github.com/cgoIT/inotibatch/compare/v1.4.2...v1.4.3) (2025-08-25)
+
+
+### Bug Fixes
+
+* only print info about queued file if appropriate ([10ebb06](https://github.com/cgoIT/inotibatch/commit/10ebb0698b6ec981f2b9f42989c8242242a15876))
+
 ## [1.4.2](https://github.com/cgoIT/inotibatch/compare/v1.4.1...v1.4.2) (2025-08-25)
 
 
