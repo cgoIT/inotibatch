@@ -377,13 +377,15 @@ main() {
   )
 
   # Start batch watcher in background
-  (
-    while true; do
-      watch_post_process_batch "${watch_params[@]}"
-      LOG_PREFIX="watch_post_process_batch" ilog "ERROR" "watch_post_process_batch exited — restarting"
-      sleep 1
-    done
-  ) &
+  if [[ -n "$POST_HOOK_DIR" ]]; then
+    (
+      while true; do
+        watch_post_process_batch "${watch_params[@]}"
+        LOG_PREFIX="watch_post_process_batch" ilog "ERROR" "watch_post_process_batch exited — restarting"
+        sleep 1
+      done
+    ) &
+  fi
 
   inotifywait_loop || trap_error "inotifywait failed for instance $CONFIG_NAME"
 }
