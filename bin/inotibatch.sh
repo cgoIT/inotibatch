@@ -4,8 +4,8 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-shopt -s nocaseglob    # globs should be case-insensitive
-shopt -s nullglob      # ensures that non-existent matches are left empty
+shopt -s nocaseglob    # Globs should be case-insensitive
+shopt -s nullglob      # Non-existent glob matches are empty
 
 SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
@@ -14,6 +14,7 @@ CONFIG_DIR="${CONFIG_DIR:-$SCRIPT_DIR/../config}"
 CONFIG_FILE="${CONFIG_DIR}/$1.conf"
 [[ -f "$CONFIG_FILE" ]] || { echo "Config $1.conf not found in $CONFIG_DIR!" >&2; exit 1; }
 
+# Load configuration
 set -a
 # shellcheck source=config/default.conf.example
 source "$CONFIG_FILE"
@@ -23,7 +24,7 @@ CONFIG_NAME="$1"
 CONFIG_PATH="$CONFIG_FILE"
 export CONFIG_NAME CONFIG_PATH
 
-# Vars that must be defined (even if empty)
+# Required variables (defined and/or non-empty)
 MUST_BE_DEFINED=(
   "PRE_HOOK_DIR"
   "POST_HOOK_DIR"
@@ -32,14 +33,11 @@ MUST_BE_DEFINED=(
   "POST_HOOK_BATCH_SIZE"
   "POST_HOOK_IDLE_TIMEOUT"
 )
-
-# Vars that must be defined AND non-empty
 MUST_BE_NON_EMPTY=(
   "SOURCE_DIR"
   "TARGET_DIR"
   "ACTION_SCRIPT"
 )
-
 MISSING=()
 
 for var in "${MUST_BE_DEFINED[@]}"; do
@@ -64,33 +62,28 @@ if (( ${#MISSING[@]} > 0 )); then
   exit 1
 fi
 
-PROCESSED_FILE="/var/log/inotibatch/$1.processed"
-ERRORED_FILE="/var/log/inotibatch/$1.errored"
-
-LOGFILE="/var/log/inotibatch/$1.log"
-mkdir -p "$(dirname "$LOGFILE")"
-exec 1>/dev/null 2>&1
-exec 3>&1 # for function return values
-
-# Log file for hook & action script output
-PROCESS_LOG="/var/log/inotibatch/${CONFIG_NAME}.process.log"
-touch "$PROCESS_LOG"
-
+# Paths
+PROCESSED_FILE="/var/log/inotibatch/$CONFIG_NAME.processed"
+ERRORED_FILE="/var/log/inotibatch/$CONFIG_NAME.errored"
+LOGFILE="/var/log/inotibatch/$CONFIG_NAME.log"
+PROCESS_LOG="/var/log/inotibatch/$CONFIG_NAME.process.log"
 SPOOL_DIR="/var/spool/inotibatch"
-mkdir -p "$SPOOL_DIR"
-BATCH_FILE="${SPOOL_DIR}/${CONFIG_NAME}.batch"
-BATCH_LOCK="${SPOOL_DIR}/${CONFIG_NAME}.lock"
-touch "$BATCH_FILE"
-rm -f "${BATCH_LOCK}" || true
+BATCH_FILE="$SPOOL_DIR/$CONFIG_NAME.batch"
+BATCH_LOCK="$SPOOL_DIR/$CONFIG_NAME.lock"
+
+mkdir -p "$(dirname "$LOGFILE")" "$SPOOL_DIR"
+touch "$LOGFILE" "$PROCESS_LOG" "$BATCH_FILE"
+rm -f "$BATCH_LOCK" || true
 touch "$BATCH_LOCK"
 
+# ---- Logging function ----
 ilog() {
   local level msg timestamp
   timestamp="$(date +'%F %T')"
 
   case "${1:-}" in
     INFO|DEBUG|WARN|ERROR)
-      level="$1"
+      level="$1";
       shift
       ;;
     *)
@@ -99,7 +92,7 @@ ilog() {
   esac
   msg="$*"
 
-  # Debug logs only when DEBUG is enabled
+  # Only log debug messages if DEBUG=true
   if [[ "$level" == "DEBUG" && "${DEBUG:-false}" != "true" ]]; then
     return 0
   fi
@@ -132,13 +125,14 @@ log() {
   fi
 
   if [[ -n "${LOG_PREFIX:-}" ]]; then
-    echo "[$timestamp] [$level] [$LOG_PREFIX] $msg"
+    printf "%s" "[$timestamp] [$level] [$LOG_PREFIX] $msg"
   else
-    echo "[$timestamp] [$level] $msg"
+    printf "%s" "[$timestamp] [$level] $msg"
   fi
 }
 export -f log
 
+# ---- Skip file check ----
 should_skip_file() {
   local filename
   filename="$1"
@@ -146,12 +140,13 @@ should_skip_file() {
   for pattern in "${EXCLUDE_PATTERNS[@]}"; do
       # shellcheck disable=SC2053
       if [[ $filename == $pattern ]]; then
-          return 0  # match found -> skip
+          return 0  # skip
       fi
   done
-  return 1  # no match
+  return 1
 }
 
+# ---- Execute action script ----
 run_action_script() {
   local src dest
   src="$1"
@@ -161,16 +156,17 @@ run_action_script() {
   if [[ -x "$ACTION_SCRIPT" ]]; then
     LOG_PREFIX="ACTION" "$ACTION_SCRIPT" "$CONFIG_NAME" "$src" "$dest" >>"$PROCESS_LOG" 2>&1
   else
-    ilog "ERROR" "Action script $ACTION_SCRIPT not found or not executable!" >&2
+    ilog "ERROR" "Action script $ACTION_SCRIPT not found or not executable!"
   fi
 }
 
+# ---- Run hooks in a directory ----
 run_hooks() {
   local hook_dir
   hook_dir="$1"
   shift
 
-  if [[ -n "${hook_dir}" ]]; then
+  if [[ -n "$hook_dir" ]]; then
     for script in "$hook_dir"/*; do
       [[ -x "$script" ]] || continue
       ilog "DEBUG" "Preparing to run hook $script with args: $*"
@@ -181,69 +177,69 @@ run_hooks() {
   fi
 }
 
+# ---- Queue a file for batch processing ----
 queue_file_for_batch() {
-  local file="$1"
+  local file
+  file="$1"
 
-  # Acquire exclusive lock for appending
-  if flock -x "$BATCH_LOCK"; then
-    ilog "DEBUG" "Queueing file $file for batch"
-    if ! echo "$file" >> "$BATCH_FILE"; then
-      ilog "ERROR" "Failed to write to batch file" >&2
-      flock -u "$BATCH_LOCK"   # release lock before return
-      return 1
-    fi
-    flock -u "$BATCH_LOCK"     # release lock after success
-  else
-    ilog "ERROR" "Failed to acquire exclusive lock in queue_file_for_batch" >&2
+  # Acquire exclusive lock on lock file
+  if ! flock -x "$BATCH_LOCK"; then
+    ilog "ERROR" "Failed to acquire lock in queue_file_for_batch"
     return 1
   fi
+
+  ilog "DEBUG" "Queueing file $file for batch"
+  if ! echo "$file" >> "$BATCH_FILE"; then
+    ilog "ERROR" "Failed to write to batch file"
+    flock -u "$BATCH_LOCK"
+    return 1
+  fi
+
+  flock -u "$BATCH_LOCK"
 }
 
+# ---- Flush batch files ----
 flush_batch() {
   local batch_file batch_lock processed_file errored_file post_hook_dir tmp_batch tmp_batch_dir files
 
-  batch_file="${1}"
-  batch_lock="${2}"
-  processed_file="${3}"
-  errored_file="${4}"
-  post_hook_dir="${5}"
+  batch_file="$1"
+  batch_lock="$2"
+  processed_file="$3"
+  errored_file="$4"
+  post_hook_dir="$5"
 
-  # Acquire exclusive lock
+  # Acquire exclusive lock and copy batch to tmp file
   if ! flock -x "$batch_lock"; then
-    ilog "ERROR" "Failed to acquire exclusive lock in flush_batch"
+    ilog "ERROR" "Failed to acquire lock in flush_batch"
     return 1
   fi
 
   if [[ ! -s "$batch_file" ]]; then
-    ilog "DEBUG" "No files to flush, batch file empty"
+    ilog "DEBUG" "No files to flush, batch empty"
     flock -u "$batch_lock"
     return 0
   fi
 
-  # Use a temporary processing file with unique name
-  tmp_batch_dir=$(dirname $batch_lock)
-  tmp_batch="$(mktemp "$tmp_batch_dir/batch-XXXX.processing")"
-
-  # Copy and clear batch file under lock
+  tmp_batch=$(mktemp "$(dirname "$batch_lock")/batch-XXXX.processing")
   if ! cp "$batch_file" "$tmp_batch"; then
     ilog "ERROR" "Failed to copy batch file"
     flock -u "$batch_lock"
     rm -f "$tmp_batch"
-    return 1
+    return 2
   fi
 
   : > "$batch_file"
-  ilog "DEBUG" "Emptied batch file after copying"
+  ilog "DEBUG" "Cleared batch file after copying"
 
   # Release lock early
   flock -u "$batch_lock"
   ilog "DEBUG" "Released batch lock"
 
-  # Read temp file and process
+  # Process temp batch
   if ! mapfile -t files < "$tmp_batch"; then
     ilog "ERROR" "Failed to read files from temporary batch file"
     rm -f "$tmp_batch"
-    return 1
+    return 2
   fi
 
   LOG_PREFIX="$post_hook_dir"
@@ -266,8 +262,11 @@ flush_batch() {
 
   rm -f "$tmp_batch"
   ilog "DEBUG" "Removed temporary batch file $tmp_batch"
+
+  return 0
 }
 
+# ---- Watch batch and flush based on size or timeout ----
 watch_batch_timeout() {
   local batch_file batch_lock processed_file errored_file post_hook_dir batch_size idle_timeout last_flush now queued rc
 
@@ -280,32 +279,31 @@ watch_batch_timeout() {
   idle_timeout="$7"
   last_flush=$(date +%s)
 
-  ilog "DEBUG" "Starting watch_batch_timeout with batch_size=$batch_size, idle_timeout=$idle_timeout"
+  ilog "DEBUG" "Starting watch_batch_timeout: batch_size=$batch_size, idle_timeout=$idle_timeout"
 
   while true; do
     sleep 5
     now=$(date +%s)
 
-    # Count how many files are in the batch
-    {
-      flock -s "$batch_lock" || {
-        ilog "ERROR" "Failed to acquire shared lock for counting batch"
-        continue
-      }
+    # Count files in batch
+    if flock -s "$batch_lock"; then
       if [[ -f "$batch_file" ]]; then
         queued=$(grep -c '' "$batch_file" 2>/dev/null)
       else
         queued=0
       fi
-    }
+      flock -u "$batch_lock"
+    else
+      ilog "ERROR" "Failed to acquire shared lock for counting"
+      continue
+    fi
 
-    ilog "DEBUG" "queued=$queued, elapsed=$(( now - last_flush )), batch_size=$batch_size, idle_timeout=$idle_timeout"
+    ilog "DEBUG" "queued=$queued, elapsed=$((now - last_flush))"
 
-    if (( queued >= batch_size )) || { (( now - last_flush >= idle_timeout )) && (( queued > 0 )); }; then
+    if (( queued >= batch_size )) || (( now - last_flush >= idle_timeout )); then
       ilog "INFO" "Triggering flush: queued=$queued"
       flush_batch "$batch_file" "$batch_lock" "$processed_file" "$errored_file" "$post_hook_dir"
       rc=$?
-
       case $rc in
         0)
           ilog "DEBUG" "flush_batch completed successfully"
@@ -326,14 +324,16 @@ watch_batch_timeout() {
   done
 }
 
+# ---- Process a single file event ----
 process_file() {
   local event src rel_path dir_part base_name target_base dest
 
   event="$1"
   src="$2"
+
   rel_path="${src#$SOURCE_DIR/}"
   dir_part=$(dirname "$rel_path")
-  base_name="$(basename "$rel_path")"
+  base_name=$(basename "$rel_path")
   target_base="$base_name"
 
   if [[ "$SANITIZE_FILENAMES" == "true" ]]; then
@@ -352,9 +352,10 @@ process_file() {
   run_action_script "$src" "$dest"
   queue_file_for_batch "$dest"
 
-  ilog "INFO" "File queued for post-hook: src=$src dest=$dest"
+  ilog "INFO" "File queued for post-hook: $dest"
 }
 
+# ---- Monitor source directory using inotifywait ----
 inotifywait_loop() {
   local args skip
   # shellcheck disable=SC2054
@@ -364,54 +365,53 @@ inotifywait_loop() {
   LOG_PREFIX="inotifywait"
   ilog "DEBUG" "Starting inotifywait with args: ${args[*]} on $SOURCE_DIR"
 
-  inotifywait "${args[@]}" "$SOURCE_DIR" | while IFS=$'|' read -r file event; do
-    ilog "DEBUG" "inotify event: $event for file $file"
+  inotifywait "${args[@]}" "$SOURCE_DIR" | while IFS='|' read -r file event; do
+    ilog "DEBUG" "Event: $event for file $file"
     if [[ "$file" = /* ]]; then
       skip=false
-      if should_skip_file "$file"; then
-        skip=true
-      fi
+      should_skip_file "$file" && skip=true
       $skip || process_file "$event" "$file" < /dev/null
     fi
   done
 }
 
+# ---- Error handling ----
 trap_error() {
   local msg
   msg="$1"
 
   ilog "ERROR" "$msg"
   if [[ -n "$EMAIL_ON_ERROR" ]]; then
-    echo "$msg" | mail -s "File Sync Error in Instance $1" "$EMAIL_ON_ERROR"
+    echo "$msg" | mail -s "File Sync Error in Instance $CONFIG_NAME" "$EMAIL_ON_ERROR"
   fi
 }
 
+# ---- Main entry point ----
 main() {
   local watch_params
 
-  ilog "INFO" "Start inotibatch, instance: $1"
+  ilog "INFO" "Starting inotibatch, instance: $CONFIG_NAME"
 
   watch_params=(
-    "${BATCH_FILE}"
-    "${BATCH_LOCK}"
-    "${PROCESSED_FILE}"
-    "${ERRORED_FILE}"
-    "${POST_HOOK_DIR}"
-    "${POST_HOOK_BATCH_SIZE}"
-    "${POST_HOOK_IDLE_TIMEOUT}"
+    "$BATCH_FILE"
+    "$BATCH_LOCK"
+    "$PROCESSED_FILE"
+    "$ERRORED_FILE"
+    "$POST_HOOK_DIR"
+    "$POST_HOOK_BATCH_SIZE"
+    "$POST_HOOK_IDLE_TIMEOUT"
   )
 
-  # Start background task in monitoring loop
+  # Start batch watcher in background
   (
     while true; do
-      # batch_file batch_lock processed_file errored_file post_hook_dir batch_size idle_timeout
       watch_batch_timeout "${watch_params[@]}"
-      ilog "ERROR" "watch_batch_timeout has ended — Restart"
-      sleep 1  # Wait briefly to avoid starting an endless loop too quickly.
+      ilog "ERROR" "watch_batch_timeout exited — restarting"
+      sleep 1
     done
   ) &
 
-  inotifywait_loop || trap_error "inotifywait failed for instance $1"
+  inotifywait_loop || trap_error "inotifywait failed for instance $CONFIG_NAME"
 }
 
-main "$1"
+main "$CONFIG_NAME"
