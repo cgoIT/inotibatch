@@ -147,6 +147,8 @@ At the top of your hook/action script, you can include this comment:
 #
 #  MAIL_ON_ERROR             Email address to notify in case of processing errors
 #
+#  DEBUG                     Enables DEBUG logging (true) or not (false or empty/not set at all)
+#
 # Available functions:
 #
 # log                        Logs a given statement to the correct logfile(s). Adds a correct

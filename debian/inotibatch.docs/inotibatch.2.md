@@ -64,6 +64,9 @@ Below are the configuration variables available for **InotiBatch**. These variab
   Example: `admin@example.com`  
   *(Optional)*
 
+### Logging settings
+- **`DEBUG`**:
+  Enables (true) or disables (false) the debug logging.
 
 ## EXAMPLE CONFIGURATION FILE
 
@@ -89,6 +92,9 @@ POST_HOOK_IDLE_TIMEOUT=30
 
 # Notification settings
 MAIL_ON_ERROR=admin@example.com
+
+# Enable/Disable debug logging
+DEBUG=false
 ```
 
 
