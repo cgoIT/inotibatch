@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/cgoIT/inotibatch/compare/v1.4.1...v1.4.2) (2025-08-25)
+
+
+### Bug Fixes
+
+* only start background batch processing if POST_HOOK_DIR is present ([3b87031](https://github.com/cgoIT/inotibatch/commit/3b87031d02a8a3c92217fd081de55d43cafeb35e))
+
 ## [1.4.1](https://github.com/cgoIT/inotibatch/compare/v1.4.0...v1.4.1) (2025-08-25)
 
 
