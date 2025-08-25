@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.4.0](https://github.com/cgoIT/inotibatch/compare/v1.3.16...v1.4.0) (2025-08-25)
+
+
+### Features
+
+* switch back to file descriptor based locking ([0cf0698](https://github.com/cgoIT/inotibatch/commit/0cf0698112d0c435be7d404dbfe0e94964eb42c5))
+* switch to file-based locking ([eb448a0](https://github.com/cgoIT/inotibatch/commit/eb448a0610387ac3e87efd369c57da44a792feb8))
+
+
+### Bug Fixes
+
+* better debug logging for filename sanitizing ([f866a27](https://github.com/cgoIT/inotibatch/commit/f866a272094cae150531fb0167c67062c7357ea1))
+* correctly set last flush time ([744ae74](https://github.com/cgoIT/inotibatch/commit/744ae74ca77e1961623f844d0eacf4c8b141a828))
+* don't use subshells if not needed ([7b3280b](https://github.com/cgoIT/inotibatch/commit/7b3280bb1ef257c29d857cf79ec81047b0cde049))
+* improve file handling for batch file ([98721db](https://github.com/cgoIT/inotibatch/commit/98721db4f304fec9416409fb59bbb6a57a108cc9))
+* remove too much debug logging ([34b020b](https://github.com/cgoIT/inotibatch/commit/34b020b729a09ab9a93482a9ce48982271cdc308))
+* typo in file ([1f17273](https://github.com/cgoIT/inotibatch/commit/1f17273a28b06facc6233bf278f572d06b233610))
+* use spool dir instead of tmp for batch spool files ([c506ff2](https://github.com/cgoIT/inotibatch/commit/c506ff24530db80760f327f6c409b017aafb4b54))
+
 ## [1.3.16](https://github.com/cgoIT/inotibatch/compare/v1.3.15...v1.3.16) (2025-08-23)
 
 
