@@ -150,16 +150,25 @@ should_skip_file() {
 
 # ---- Execute action script ----
 run_action_script() {
-  local src dest
+  local src dest rc
   src="$1"
   dest="$2"
 
   LOG_PREFIX="run_action_script" ilog "DEBUG" "Executing action script $ACTION_SCRIPT with src=$src dest=$dest"
   if [[ -x "$ACTION_SCRIPT" ]]; then
     LOG_PREFIX="ACTION" "$ACTION_SCRIPT" "$CONFIG_NAME" "$src" "$dest" >>"$PROCESS_LOG" 2>&1
+    rc=$?
+
+    if [[ $rc -ne 0 ]]; then
+      printf "%s" "$(date +'%F %T') $f\n" >> "$ERRORED_FILE"
+      return $rc
+    fi
   else
     LOG_PREFIX="run_action_script" ilog "ERROR" "Action script $ACTION_SCRIPT not found or not executable!"
+    return 1
   fi
+
+  return 0
 }
 
 # ---- Run hooks in a directory ----
@@ -324,7 +333,7 @@ process_file() {
     queue_file_for_batch "$dest"
     LOG_PREFIX="process_file" ilog "INFO" "File queued for post-hook: $dest"
   else
-    printf "%s" "$(date +'%F %T') $dest" >> "$PROCESSED_FILE"
+    printf "%s" "$(date +'%F %T') $dest\n" >> "$PROCESSED_FILE"
     LOG_PREFIX="process_file" ilog "DEBUG" "No POST_HOOK_DIR set. Not queuing file $dest for post processing."
   fi
 }
