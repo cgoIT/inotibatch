@@ -127,9 +127,9 @@ log() {
   fi
 
   if [[ -n "${LOG_PREFIX:-}" ]]; then
-    printf "%s" "[$timestamp] [$level] [$LOG_PREFIX] $msg"
+    printf "%s\n" "[$timestamp] [$level] [$LOG_PREFIX] $msg"
   else
-    printf "%s" "[$timestamp] [$level] $msg"
+    printf "%s\n" "[$timestamp] [$level] $msg"
   fi
 }
 export -f log
@@ -160,7 +160,7 @@ run_action_script() {
     rc=$?
 
     if [[ $rc -ne 0 ]]; then
-      printf "%s" "$(date +'%F %T') $f\n" >> "$ERRORED_FILE"
+      printf "%s\n" "$(date +'%F %T') $f" >> "$ERRORED_FILE"
       return $rc
     fi
   else
@@ -246,9 +246,9 @@ flush_batch() {
   LOG_PREFIX="flush_batch" ilog "INFO" "Post-Hook for ${#files[@]} files"
 
   if run_hooks "$post_hook_dir" "${files[@]}"; then
-    for f in "${files[@]}"; do printf "%s" "$(date +'%F %T') $f\n" >> "$processed_file"; done
+    for f in "${files[@]}"; do printf "%s\n" "$(date +'%F %T') $f" >> "$processed_file"; done
   else
-    for f in "${files[@]}"; do printf "%s" "$(date +'%F %T') $f\n" >> "$errored_file"; done
+    for f in "${files[@]}"; do printf "%s\n" "$(date +'%F %T') $f" >> "$errored_file"; done
     LOG_PREFIX="flush_batch" ilog "ERROR" "Post-hook failed"
     rm -f "$tmp_batch"
     return 1
@@ -333,7 +333,7 @@ process_file() {
     queue_file_for_batch "$dest"
     LOG_PREFIX="process_file" ilog "INFO" "File queued for post-hook: $dest"
   else
-    printf "%s" "$(date +'%F %T') $dest\n" >> "$PROCESSED_FILE"
+    printf "%s\n" "$(date +'%F %T') $dest" >> "$PROCESSED_FILE"
     LOG_PREFIX="process_file" ilog "DEBUG" "No POST_HOOK_DIR set. Not queuing file $dest for post processing."
   fi
 }
