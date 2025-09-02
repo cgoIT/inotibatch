@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.4](https://github.com/cgoIT/inotibatch/compare/v1.4.3...v1.4.4) (2025-09-02)
+
+
+### Bug Fixes
+
+* add correct line breaks in processed log ([1e342bc](https://github.com/cgoIT/inotibatch/commit/1e342bc33e0392f378de98da958d99c053e88f37))
+
 ## [1.4.3](https://github.com/cgoIT/inotibatch/compare/v1.4.2...v1.4.3) (2025-08-25)
 
 
