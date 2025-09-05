@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.5](https://github.com/cgoIT/inotibatch/compare/v1.4.4...v1.4.5) (2025-09-02)
+
+
+### Bug Fixes
+
+* correct usage of printf ([810cfb5](https://github.com/cgoIT/inotibatch/commit/810cfb5dadc5a6d1d2609b8c5433ee91d7f3ddd7))
+
 ## [1.4.4](https://github.com/cgoIT/inotibatch/compare/v1.4.3...v1.4.4) (2025-09-02)
 
 
