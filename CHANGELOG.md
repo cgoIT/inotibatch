@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.6](https://github.com/cgoIT/inotibatch/compare/v1.4.5...v1.4.6) (2025-09-05)
+
+
+### Bug Fixes
+
+* fix the last processing timestamp in `inotibatch-status` ([3174a82](https://github.com/cgoIT/inotibatch/commit/3174a828406b29e1111e63995c3f96f87af8e2c3))
+
 ## [1.4.5](https://github.com/cgoIT/inotibatch/compare/v1.4.4...v1.4.5) (2025-09-02)
 
 
