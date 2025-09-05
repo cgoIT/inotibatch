@@ -27,18 +27,13 @@ for conf_file in "$CONFIG_DIR"/*.conf; do
     fi
 
     # Number of files processed (post-hook counter, e.g. using wc -l in process.log or batch log)
-    log="$LOG_DIR/${instance_name}.process.log"
-    if [[ -f "$log" ]]; then
-        last_ts=$(stat -c '%y' "$log" | cut -d'.' -f1)
-    else
-        last_ts="–"
-    fi
-
     processed_file="$LOG_DIR/${instance_name}.processed"
     if [[ -f "$processed_file" ]]; then
         countProcessed=$(wc -l < "$processed_file" || echo "0")
+        last_ts=$(awk 'END {print $1, $2}' "$processed_file")
     else
         countProcessed="0"
+        last_ts="–"
     fi
 
     errored_file="$LOG_DIR/${instance_name}.errored"
